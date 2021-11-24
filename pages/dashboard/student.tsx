@@ -1,6 +1,8 @@
 import { Table, Tag, Space } from 'antd';
 import 'antd/dist/antd.css';
+import axios from 'axios';
 import React, { useEffect  } from 'react';
+import Dashboard from '../dashboard';
 
 const columns = [
   {
@@ -68,10 +70,19 @@ function StudentTable(){
       });
     
   }, []);
-  
+                                   
 
-  return (<Table columns={columns} dataSource={studentData} />);
+
+  return (
+      <>
+        <Dashboard> 
+          <Table columns={columns} dataSource={studentData}/>
+          <p>test </p>
+        </Dashboard>
+       
+      </>
+  );
   
 }
 
-export default StudentTable ;
+export default StudentTable;

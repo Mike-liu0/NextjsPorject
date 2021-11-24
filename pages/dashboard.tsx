@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children } from 'react';
 import { Layout, Menu, Breadcrumb, Button} from 'antd';
 import Link from "next/link";
 import {
@@ -11,27 +11,17 @@ import {
 } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import router from 'next/router';
-import StudentTable from './dashboard/student';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
 
-class SiderDemo extends React.Component {
-  state = {
-    collapsed: false,
+function Dashboard ({Children} : any) {
+  const [collapsed, setCollapsed] = React.useState(false);
+  const toggle = () => {
+    setCollapsed(!collapsed);
   };
 
-
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
-  };
-
-
-  render() {
-    const { collapsed } = this.state;
     // const router = useRouter();
     const handleLogout = () => {
       let header = {
@@ -51,7 +41,7 @@ class SiderDemo extends React.Component {
     return (
       <Layout style={{ minHeight: '100vh' }}>
        
-        <Sider collapsible collapsed={collapsed} onCollapse={this.toggle}>
+        <Sider collapsible collapsed={collapsed} onCollapse={toggle}>
           <div className="logo" style={{ textAlign:'center', paddingTop: 20, color: '#fff'}}> <p>CMS</p> </div>
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
             <Menu.Item key="1" icon={<PieChartOutlined />}>
@@ -79,9 +69,9 @@ class SiderDemo extends React.Component {
         </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ position: 'relative' }} >
-            {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
               className: 'trigger',
-              onClick: this.toggle,
+              onClick: toggle,
               style: {color: "white"},
             })}
             <Button type="text" style={{ position: 'absolute', color: 'white', top: '15px', right: '10px'}} onClick={handleLogout}>Logout</Button>
@@ -92,17 +82,16 @@ class SiderDemo extends React.Component {
               <Breadcrumb.Item>Overview</Breadcrumb.Item>
             </Breadcrumb>
             <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-             
-              <StudentTable />
+              {Children}
+            
             </div>
-            {/* {Children} */}
-           
+            
           </Content>
           <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
         </Layout>
       </Layout>
     );
-  }
+  
 }
 
-export default SiderDemo;
+export default Dashboard;
