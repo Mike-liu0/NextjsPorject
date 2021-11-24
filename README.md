@@ -12,3 +12,13 @@ Not-completed & questions
 1. the structure of dashboard (how to use children in nextjs or take the header and navbar as module for subpages
 2. show data of students json (I dont know how to show the list in the json properly)
 3. 
+
+
+Homework4: (24-11-2021)
+Completed:
+1. complete the dashboard & student function 
+2. create some interface for api
+
+Not-completed & questions
+1. the student table is not shown
+2. I do not know thow to connect paclkages 
