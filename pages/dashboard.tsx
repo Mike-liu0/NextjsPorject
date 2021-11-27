@@ -1,4 +1,4 @@
-import React, { Children } from 'react';
+import React from 'react';
 import { Layout, Menu, Breadcrumb, Button} from 'antd';
 import Link from "next/link";
 import {
@@ -16,7 +16,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
 
-function Dashboard ({Children} : any) {
+function Dashboard ({children} : any) {
   const [collapsed, setCollapsed] = React.useState(false);
   const toggle = () => {
     setCollapsed(!collapsed);
@@ -44,9 +44,9 @@ function Dashboard ({Children} : any) {
         <Sider collapsible collapsed={collapsed} onCollapse={toggle}>
           <div className="logo" style={{ textAlign:'center', paddingTop: 20, color: '#fff'}}> <p>CMS</p> </div>
           <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-            <Menu.Item key="1" icon={<PieChartOutlined />}>
+            <Menu.Item key="1" icon={<PieChartOutlined />}><Link href="/dashboard/overview">
               Overview
-            </Menu.Item>
+            </Link></Menu.Item>
             <SubMenu key="sub1" icon={<UserOutlined />} title="Student">
              <Menu.Item key="2"><Link href="/dashboard/student">
                 Student List
@@ -77,13 +77,9 @@ function Dashboard ({Children} : any) {
             <Button type="text" style={{ position: 'absolute', color: 'white', top: '15px', right: '10px'}} onClick={handleLogout}>Logout</Button>
           </Header>
           <Content style={{ margin: '0 16px' }}>
-            <Breadcrumb style={{ margin: '16px 0' }}>
-              <Breadcrumb.Item>CMS Manager System</Breadcrumb.Item>
-              <Breadcrumb.Item>Overview</Breadcrumb.Item>
-            </Breadcrumb>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
-              {Children}
             
+            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+              {children}
             </div>
             
           </Content>
