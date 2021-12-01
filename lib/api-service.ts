@@ -1,7 +1,33 @@
 import axios from 'axios';
 import { Student } from './model/student';
 
-export function studentInfo(){
+export function studentInfo(page:number, pagesize:number){
+
+    const axios = require('axios');
+    var value;
+
+       
+    return axios.get<>('http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/students',{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+            params: {
+                page: page,
+                limit: pagesize,
+              }
+        }).then(function (response: any) {
+            value = (response.data.data);
+            return value;
+            
+        })
+        .catch(function (error :any) {
+            console.log(error);
+        });
+    
+    
+}
+
+
+
+
     // const URL = 'http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api';
     // const AxiosInstance = axios.create({
     //     URL,
@@ -14,21 +40,3 @@ export function studentInfo(){
     //     config.headers.Authorization= 'Bearer' + token;
     // }) 
     
-    const axios = require('axios');
-    var value : Student[];
-       
-    axios.get<Student[]>('http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/students?page=1&limit=10',{
-            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
-        }).then(function (response: any) {
-            // console.log(response);
-            value = (response.data.data.students);
-            console.log(value);
-            return value;
-        })
-        .catch(function (error :any) {
-            console.log(error);
-        });
-    
-    
-}
-
