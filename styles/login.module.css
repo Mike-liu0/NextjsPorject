@@ -1,0 +1,29 @@
+  .login-form {
+    max-width: 600px;
+    width: 500px;
+    position: absolute; 
+    left: 38%;
+    /* display: flex; */
+  }
+  .login-form-forgot {
+    float: right;
+  }
+  .ant-col-rtl .login-form-forgot {
+    float: left;
+  }
+  .login-form-button {
+    width: 100%;
+  }
+  
+  .login-form h3 {
+    text-align: center;
+    font-weight: bold;
+    font-size: x-large;
+  }
+  
+  
+  .header {
+    padding: 40px;
+    background: darkgrey;
+    border-bottom: 1px solid #999;
+  }
