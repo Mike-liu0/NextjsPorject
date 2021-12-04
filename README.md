@@ -1,6 +1,14 @@
 
 # Homework notes:
 
+
+Homework6: (01-12-2021)
+Completed:
+1. complete the pagination function
+
+Not-completed & questions
+1. cannot use the totalStudent state to params of pagination, I just use the hard code(300) .
+
 Homework5: (27-11-2021)
 Completed:
 1. complete children function
