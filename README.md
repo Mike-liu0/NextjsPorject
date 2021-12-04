@@ -2,6 +2,16 @@
 # Homework notes:
 
 
+Homework7: (04-12-2021)
+Completed:
+1. complete clean code and add config file
+2. add the button for the add, edit, remove function
+
+Not-completed & questions
+1. A small bug about cannot show defaultchecked for user role in login page
+2. cannot call remove user function 
+3. not add add/edit form for add/edit functions
+
 Homework6: (01-12-2021)
 Completed:
 1. complete the pagination function
