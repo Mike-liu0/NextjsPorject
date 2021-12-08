@@ -1,4 +1,4 @@
-import { Table, Space, Breadcrumb, Popconfirm, Modal, Button} from 'antd';
+import { Table, Space, Breadcrumb, Popconfirm, Modal, Button, Form, Radio, Input, Select, Option} from 'antd';
 import 'antd/dist/antd.css';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -6,39 +6,85 @@ import Dashboard from '../dashboard';
 import { Student } from '../../lib/model/Student';
 import { StuCourse } from '../../lib/model/StuCourse';
 import { StuType } from '../../lib/model/StuType';
-import { studentInfo } from '../../lib/api-service';
+import { studentInfo, addNewStudent, deleteStudent, editStudent } from '../../lib/api-service';
 
 
 function StudentTable() {
+  //set up the const related to the table
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [currentPageSize, setCurrentPageSize] = React.useState(10);
+  const [studentData, setStudentData] = React.useState([]);
+  const [totalStudent, setTotalStudent] = React.useState<number>(200);
 
-  const [visible, setVisible] = React.useState(false);
-  const [confirmLoading, setConfirmLoading] = React.useState(false);
-  const [modalText, setModalText] = React.useState('Content of the modal');
+  //set up the const related to add new function
+  const [addStudentVisible, setAddStudentVisible] = React.useState(false);
+  const [confirmNewStudentLoading, setconfirmNewStudentLoading] = React.useState(false);
+  const [newStudentName, setNewStudentName] = React.useState('');
+  const [newStudentEmail, setNewStudentEmail] = React.useState('');
+  const [newStudentArea, setNewStudentArea] = React.useState('aus');
+  const [newStudentType, setNewStudentType] = React.useState(0);
 
-  const showModal = () => {
-    setVisible(true);
+  const showAddModal = () => {
+    setAddStudentVisible(true);
   };
 
-  const handleOk = () => {
-    setModalText('The modal will be closed after two seconds');
-    setConfirmLoading(true);
+  const handleAddNewStudent = async () => {
+    setconfirmNewStudentLoading(true);
+    var res = await addNewStudent(newStudentName, newStudentEmail, newStudentArea, newStudentType);
+    console.log(res)
     setTimeout(() => {
-      setVisible(false);
-      setConfirmLoading(false);
+      setAddStudentVisible(false);
+      setconfirmNewStudentLoading(false);
     }, 2000);
   };
 
-  const handleCancel = () => {
+  const handleNewStudentCancel = () => {
     console.log('Clicked cancel button');
-    setVisible(false);
+    setAddStudentVisible(false);
   };
 
+  const { Option } = Select;
+
+  //set up the const related to edit student function
+  const [editStudentVisible, setEditStudentVisible] = React.useState(false);
+  const [confirmEditStudentLoading, setconfirmEditStudentLoading] = React.useState(false);
+  const [editStudentName, setEditStudentName] = React.useState('');
+  const [editStudentEmail, setEditStudentEmail] = React.useState('');
+  const [editStudentArea, setEditStudentArea] = React.useState('aus');
+  const [editStudentType, setEditStudentType] = React.useState(0);
+  const [editStudentID, setEditStudentID] = React.useState('');
+
+
+  const handleEditStudent = async () => {
+    setconfirmNewStudentLoading(true);
+    var res = await editStudent(editStudentID, editStudentName, editStudentEmail, editStudentArea, editStudentType);
+    console.log(res);
+    setTimeout(() => {
+      setEditStudentVisible(false);
+      setconfirmEditStudentLoading(false);
+    }, 2000);
+  };
+
+  const handleEditStudentCancel = () => {
+    console.log('Clicked cancel button');
+    setEditStudentVisible(false);
+  };
+  
+
   const columns = [
+    {
+      title: 'No',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text: string) => text,
+    
+    },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
       render: (text: string) => <a>{text}</a>,
+      sorter: (a:string, b:string) => a.length - b.length,
     },
     {
       title: 'Area',
@@ -69,32 +115,70 @@ function StudentTable() {
     },
     {
       title: 'Action',
-      dataIndex: '',
-      key: 'x',
-      render: () => (
-        <Space size="middle">
-          <Button>Edit</Button>
-          <Modal title="Basic Modal" visible={visible} onOk={handleOk}  confirmLoading={confirmLoading} onCancel={handleCancel}>
-                  <p>Some contents...</p>
-                  <p>Some contents...</p>
-                  <p>Some contents...</p>
+      dataIndex: 'action',
+      key: 'action',
+      render: (text:any, record:any, index:string) =>
+          // state.dataSource.length >= 1 ? (
+            <Space>
+                <Button type="primary" onClick={() => {setEditStudentVisible(true); ; setEditStudentID(record.id)}}>Edit</Button>
+                <Modal title="Edit student" visible={editStudentVisible} onOk={handleEditStudent}  confirmLoading={confirmEditStudentLoading} onCancel={handleEditStudentCancel} okText={"submit"} destroyOnClose={true}>
+                  <Form 
+                  labelCol={{ span: 7 }}
+                  wrapperCol={{ span: 14 }}
+                  layout="horizontal">
+                    <Form.Item label="Name"
+                    name="name"
+                    rules={[{ required: true}]}>
+                      <Input type="text" value={record.name} placeholder={record.name} onChange={e => setEditStudentName(e.target.value)}/>
+                    </Form.Item>
+                    <Form.Item label="Email"
+                    name="email"
+                    rules={[{ required: true}]}>
+                    <Input
+                        type="email"
+                        value={record.email}
+                        placeholder={record.email}
+                        onChange={e => setEditStudentEmail(e.target.value)}
+                      />
+                    </Form.Item>
+                    <Form.Item label="Area"
+                    name="area"
+                    rules={[{ required: true}]}>
+                    <Select defaultValue="Australia" >
+                      <Option value="Australia">Australia</Option>
+                      <Option value="China">China</Option>
+                      <Option value="US">US</Option>
+                    </Select>
+                    </Form.Item>
+                    <Form.Item label="Student Type"
+                    name="type"
+                    rules={[{ required: true}]}>
+                    <Select defaultValue="1" >
+                      <Option value="1">1</Option>
+                      <Option value="2">2</Option>
+                      <Option value="3">3</Option>
+                    </Select>
+                    </Form.Item>
+                  </Form>
                 </Modal>
-                {/* <Popconfirm title="Sure to delete?" onConfirm={(e) => {(record.key, e) => { 
-                  e.preventDefault();
-                  const data = studentData.filter(item => item.key !== key);
-                  this.setState({ data, isPageTween: false });}}}>
-                  <a>Delete</a>
-                </Popconfirm> */}
-        </Space>
-      ),
+              <Popconfirm title="Sure to delete?" onConfirm={() => {
+                  console.log(currentPage);
+                  deleteStudent(record.id); 
+                  // fetchData(currentPage, currentPageSize);
+                  window.location.reload();
+                }
+              }>
+                <Button type="primary">Delete</Button>
+              </Popconfirm>
+            </Space>
+          // ) : null,
     },
   ];
   
-
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [currentPageSize, setCurrentPageSize] = React.useState(10);
-  const [studentData, setStudentData] = React.useState([]);
-  const [totalStudent, setTotalStudent] = React.useState<number>(200);
+  useEffect(() => {
+    fetchData(currentPage, currentPageSize);
+  }, [currentPage, currentPageSize]);
+  
  
   async function fetchData(currentPage: number, currentPageSize: number) {
     // use studentInfo func to replace the following lines
@@ -102,15 +186,7 @@ function StudentTable() {
     var students = data.students;
     setTotalStudent(data.total);
     setStudentData(students);
-    
   }
-
-  
-
-  useEffect(() => {
-    fetchData(currentPage, currentPageSize);
-  }, []);
-
  
   const handleChange = (page: number, pageSize: number) => {
     fetchData(page, pageSize);
@@ -127,16 +203,50 @@ function StudentTable() {
           </Breadcrumb.Item>
           <Breadcrumb.Item>Student List</Breadcrumb.Item>
         </Breadcrumb>
-        <Button type="primary">+ add</Button>
-        <Modal title="Basic Modal" visible={visible} onOk={handleOk}  confirmLoading={confirmLoading} onCancel={handleCancel}>
-                  <p>Some contents...</p>
-                  <p>Some contents...</p>
-                  <p>Some contents...</p>
+        <Button type="primary" onClick={showAddModal}>+ add</Button>
+        <Modal title="Add new student" visible={addStudentVisible} onOk={handleAddNewStudent}  confirmLoading={confirmNewStudentLoading} onCancel={handleNewStudentCancel} okText={"submit"} destroyOnClose={true}>
+          <Form 
+          labelCol={{ span: 7 }}
+          wrapperCol={{ span: 14 }}
+          layout="horizontal">
+            <Form.Item label="Name"
+            name="name"
+            rules={[{ required: true}]}>
+             <Input type="text" placeholder="student name" onChange={e => setNewStudentName(e.target.value)}/>
+            </Form.Item>
+            <Form.Item label="Email"
+            name="email"
+            rules={[{ required: true}]}>
+            <Input
+                type="email"
+                placeholder="email"
+                onChange={e => setNewStudentEmail(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item label="Area"
+            name="area"
+            rules={[{ required: true}]}>
+            <Select defaultValue="Australia" >
+              <Option value="Australia">Australia</Option>
+              <Option value="China">China</Option>
+              <Option value="US">US</Option>
+            </Select>
+            </Form.Item>
+            <Form.Item label="Student Type"
+            name="type"
+            rules={[{ required: true}]}>
+             <Select defaultValue="1" >
+              <Option value="1">1</Option>
+              <Option value="2">2</Option>
+              <Option value="3">3</Option>
+            </Select>
+            </Form.Item>
+          </Form>
         </Modal>
         <Table columns={columns} dataSource={studentData} pagination={{
           defaultPageSize: 10, showSizeChanger: true,
           pageSizeOptions: ['10', '20', '50'], onChange: handleChange, total: totalStudent
-        }} />
+        }} scroll={{scrollToFirstRowOnChange: true}} />
       </Dashboard>
     </>
   );
@@ -145,19 +255,3 @@ function StudentTable() {
 export default StudentTable;
 
 
-
-
-      //call api
-      // var student = await axios.get<Student[]>('http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/students?page=1&limit=10',{
-      //       headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
-      //   }).then(function (response: any) {
-      //       // console.log(response);
-      //       var data = (response.data.data.students);
-      //       // console.log(data);
-      //       //setStudentData(data);
-      //       // return value;
-      //       return data;
-      //   })
-      //   .catch(function (error :any) {
-      //       console.log(error);
-      //   });

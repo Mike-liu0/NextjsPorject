@@ -42,7 +42,7 @@ function Login(){
               <h3>COURSE MANAGEMENT ASSISTANT</h3>
             </Form.Item>
             <Form.Item name="role" rules={[{ required: true, message: 'Please Pick Your Role!' }]}>
-                <Radio.Group value={role} onChange={e => setRole(e.target.value)} >
+                <Radio.Group defaultValue={role} onChange={e => setRole(e.target.value)} >
                   <Radio.Button value="student">Student</Radio.Button>
                   <Radio.Button value="teacher">Teacher</Radio.Button>
                   <Radio.Button value="manager">Manager</Radio.Button>
