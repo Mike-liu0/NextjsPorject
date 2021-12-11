@@ -21,8 +21,8 @@ function StudentTable() {
   const [confirmNewStudentLoading, setconfirmNewStudentLoading] = React.useState(false);
   const [newStudentName, setNewStudentName] = React.useState('');
   const [newStudentEmail, setNewStudentEmail] = React.useState('');
-  const [newStudentArea, setNewStudentArea] = React.useState('aus');
-  const [newStudentType, setNewStudentType] = React.useState(0);
+  const [newStudentArea, setNewStudentArea] = React.useState('');
+  const [newStudentType, setNewStudentType] = React.useState(1);
 
   const showAddModal = () => {
     setAddStudentVisible(true);
@@ -31,10 +31,10 @@ function StudentTable() {
   const handleAddNewStudent = async () => {
     setconfirmNewStudentLoading(true);
     var res = await addNewStudent(newStudentName, newStudentEmail, newStudentArea, newStudentType);
-    console.log(res)
     setTimeout(() => {
       setAddStudentVisible(false);
       setconfirmNewStudentLoading(false);
+      fetchData(currentPage, currentPageSize);
     }, 2000);
   };
 
@@ -46,27 +46,26 @@ function StudentTable() {
   const { Option } = Select;
 
   //set up the const related to edit student function
-  const [editStudentVisible, setEditStudentVisible] = React.useState(false);
-  const [confirmEditStudentLoading, setconfirmEditStudentLoading] = React.useState(false);
-  const [editStudentName, setEditStudentName] = React.useState('');
-  const [editStudentEmail, setEditStudentEmail] = React.useState('');
-  const [editStudentArea, setEditStudentArea] = React.useState('aus');
-  const [editStudentType, setEditStudentType] = React.useState(0);
-  const [editStudentID, setEditStudentID] = React.useState('');
-
+  const [editStudentVisible, setEditStudentVisible] = React.useState<boolean>(false);
+  const [confirmEditStudentLoading, setconfirmEditStudentLoading] = React.useState<boolean>(false);
+  const [editStudentName, setEditStudentName] = React.useState<string>('');
+  const [editStudentEmail, setEditStudentEmail] = React.useState<string>('');
+  const [editStudentArea, setEditStudentArea] = React.useState<string>('');
+  const [editStudentType, setEditStudentType] = React.useState<StuType | null>();
+  const [editStudentID, setEditStudentID] = React.useState<string>('');
 
   const handleEditStudent = async () => {
     setconfirmNewStudentLoading(true);
     var res = await editStudent(editStudentID, editStudentName, editStudentEmail, editStudentArea, editStudentType);
-    console.log(res);
+    // setEditStudentName(res.)
     setTimeout(() => {
       setEditStudentVisible(false);
       setconfirmEditStudentLoading(false);
+      fetchData(currentPage, currentPageSize);
     }, 2000);
   };
 
   const handleEditStudentCancel = () => {
-    console.log('Clicked cancel button');
     setEditStudentVisible(false);
   };
   
@@ -117,10 +116,18 @@ function StudentTable() {
       title: 'Action',
       dataIndex: 'action',
       key: 'action',
-      render: (text:any, record:any, index:string) =>
-          // state.dataSource.length >= 1 ? (
+      render: (_:any, record:any) =>
             <Space>
-                <Button type="primary" onClick={() => {setEditStudentVisible(true); ; setEditStudentID(record.id)}}>Edit</Button>
+                <Button type="primary" onClick={() => {
+                  setEditStudentVisible(true); 
+                  console.log(record);
+                  setEditStudentID(record.id); 
+                  setEditStudentName(record.name);
+                  setEditStudentEmail(record.email);
+                  setEditStudentType(record.type.id);
+                  setEditStudentArea(record.country);
+                  // setEditStudentType(record.type);
+                  }}>Edit</Button>
                 <Modal title="Edit student" visible={editStudentVisible} onOk={handleEditStudent}  confirmLoading={confirmEditStudentLoading} onCancel={handleEditStudentCancel} okText={"submit"} destroyOnClose={true}>
                   <Form 
                   labelCol={{ span: 7 }}
@@ -129,14 +136,14 @@ function StudentTable() {
                     <Form.Item label="Name"
                     name="name"
                     rules={[{ required: true}]}>
-                      <Input type="text" value={record.name} placeholder={record.name} onChange={e => setEditStudentName(e.target.value)}/>
+                      <Input type="text" defaultValue={record.name} placeholder={record.name} onChange={e => setEditStudentName(e.target.value)}/>
                     </Form.Item>
                     <Form.Item label="Email"
                     name="email"
                     rules={[{ required: true}]}>
                     <Input
                         type="email"
-                        value={record.email}
+                        defaultValue={record.email}
                         placeholder={record.email}
                         onChange={e => setEditStudentEmail(e.target.value)}
                       />
@@ -144,19 +151,20 @@ function StudentTable() {
                     <Form.Item label="Area"
                     name="area"
                     rules={[{ required: true}]}>
-                    <Select defaultValue="Australia" >
+                    <Select defaultValue={editStudentArea} onChange={e => setEditStudentArea(e)} >
                       <Option value="Australia">Australia</Option>
                       <Option value="China">China</Option>
                       <Option value="US">US</Option>
+                      <Option value={editStudentArea}>{editStudentArea}</Option>
                     </Select>
                     </Form.Item>
                     <Form.Item label="Student Type"
                     name="type"
                     rules={[{ required: true}]}>
-                    <Select defaultValue="1" >
-                      <Option value="1">1</Option>
-                      <Option value="2">2</Option>
-                      <Option value="3">3</Option>
+                    <Select defaultValue={editStudentType} onChange={e => setEditStudentType(e)}>
+                      <Option value="1">Tester</Option>
+                      <Option value="2">Developer</Option>
+                      
                     </Select>
                     </Form.Item>
                   </Form>
@@ -164,14 +172,14 @@ function StudentTable() {
               <Popconfirm title="Sure to delete?" onConfirm={() => {
                   console.log(currentPage);
                   deleteStudent(record.id); 
-                  // fetchData(currentPage, currentPageSize);
-                  window.location.reload();
+                  setTimeout(() => {
+                    fetchData(currentPage, currentPageSize);
+                  }, 500);
                 }
               }>
                 <Button type="primary">Delete</Button>
               </Popconfirm>
             </Space>
-          // ) : null,
     },
   ];
   
@@ -179,7 +187,6 @@ function StudentTable() {
     fetchData(currentPage, currentPageSize);
   }, [currentPage, currentPageSize]);
   
- 
   async function fetchData(currentPage: number, currentPageSize: number) {
     // use studentInfo func to replace the following lines
     var data = await studentInfo(currentPage, currentPageSize);
@@ -189,9 +196,9 @@ function StudentTable() {
   }
  
   const handleChange = (page: number, pageSize: number) => {
-    fetchData(page, pageSize);
+    setCurrentPage(page);
+    setCurrentPageSize(pageSize);
   }
-
 
   return (
     <>
@@ -226,7 +233,7 @@ function StudentTable() {
             <Form.Item label="Area"
             name="area"
             rules={[{ required: true}]}>
-            <Select defaultValue="Australia" >
+            <Select defaultValue={newStudentArea}  onChange={e => setNewStudentArea(e)}>
               <Option value="Australia">Australia</Option>
               <Option value="China">China</Option>
               <Option value="US">US</Option>
@@ -235,10 +242,9 @@ function StudentTable() {
             <Form.Item label="Student Type"
             name="type"
             rules={[{ required: true}]}>
-             <Select defaultValue="1" >
-              <Option value="1">1</Option>
-              <Option value="2">2</Option>
-              <Option value="3">3</Option>
+             <Select defaultValue={newStudentType} onChange={e => setNewStudentType(e)} >
+              <Option value="1">Tester</Option>
+              <Option value="2">Developer</Option>
             </Select>
             </Form.Item>
           </Form>

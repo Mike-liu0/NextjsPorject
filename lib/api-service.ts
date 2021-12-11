@@ -114,7 +114,7 @@ export function editStudent(id:string, name: string, email: string, country: str
     console.log(type);
     const axios = require('axios');
     
-    return axios.post(API_URL + 'students',{
+    return axios.put(API_URL + 'students',{
         id: id,
         name: name,
         email: email,
@@ -124,6 +124,7 @@ export function editStudent(id:string, name: string, email: string, country: str
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
         }).then(function (response: any) {
             console.log('add new student');
+            console.log(response);
             return response;
         }).catch(function (error:any) {
             // handle error
