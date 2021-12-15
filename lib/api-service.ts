@@ -87,7 +87,6 @@ export function deleteStudent(id: string){
 }
 
 export function getStudent(id: string){
-    console.log(id);
     const axios = require('axios');
     return axios.get(API_URL + 'students/'+id,{
         headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
@@ -95,8 +94,8 @@ export function getStudent(id: string){
             //     id:id,
             //     }
         }).then(function (response: any) {
-            console.log('delete student' + id);
-            return response;
+            // console.log(response.data);
+            return response.data;
         })
         // .catch(function (error:any) {
         //     // handle error
@@ -123,13 +122,11 @@ export function editStudent(id:string, name: string, email: string, country: str
       },{
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
         }).then(function (response: any) {
-            console.log('add new student');
+            console.log('edit student info');
             console.log(response);
             return response;
         }).catch(function (error:any) {
             // handle error
             console.log(error);
-        }).then(function () {
-        
         });
 }

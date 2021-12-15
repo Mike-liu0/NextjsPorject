@@ -1,19 +1,20 @@
-import { Table, Space, Breadcrumb, Popconfirm, Modal, Button, Form, Radio, Input, Select, Option} from 'antd';
+import { Table, Space, Breadcrumb, Popconfirm, Modal, Button, Form, Radio, Input, Select} from 'antd';
 import 'antd/dist/antd.css';
+import Link from 'next/link'
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import Dashboard from '../dashboard';
-import { Student } from '../../lib/model/Student';
-import { StuCourse } from '../../lib/model/StuCourse';
-import { StuType } from '../../lib/model/StuType';
-import { studentInfo, addNewStudent, deleteStudent, editStudent } from '../../lib/api-service';
+import Dashboard from '../../../components/dashboard';
+import { Student } from '../../../lib/model/Student';
+import { StuCourse } from '../../../lib/model/StuCourse';
+import { StuType } from '../../../lib/model/StuType';
+import { studentInfo, addNewStudent, deleteStudent, editStudent } from '../../../lib/api-service';
 
 
 function StudentTable() {
   //set up the const related to the table
   const [currentPage, setCurrentPage] = React.useState(1);
   const [currentPageSize, setCurrentPageSize] = React.useState(10);
-  const [studentData, setStudentData] = React.useState([]);
+  const [studentData, setStudentData] = React.useState<Student[] | undefined>([]);
   const [totalStudent, setTotalStudent] = React.useState<number>(200);
 
   //set up the const related to add new function
@@ -82,7 +83,8 @@ function StudentTable() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (text: string) => <a>{text}</a>,
+      // render: (text: string, record:any) => <a>{text}</a>,
+       render: (text: string, record:any) => <Link href={`/dashboard/student/${record.id}`}><a>{text}</a></Link>,
       sorter: (a:string, b:string) => a.length - b.length,
     },
     {
@@ -190,9 +192,10 @@ function StudentTable() {
   async function fetchData(currentPage: number, currentPageSize: number) {
     // use studentInfo func to replace the following lines
     var data = await studentInfo(currentPage, currentPageSize);
-    var students = data.students;
+    var studentList = data.students;
+    // console.log(students);
     setTotalStudent(data.total);
-    setStudentData(students);
+    setStudentData(studentList);
   }
  
   const handleChange = (page: number, pageSize: number) => {

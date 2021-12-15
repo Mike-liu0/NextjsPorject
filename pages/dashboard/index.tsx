@@ -6,7 +6,7 @@ import Dashboard from '../../components/dashboard';
 
 
 
-function Overview(){
+function Home(){
                             
   return (
       <>
@@ -14,7 +14,7 @@ function Overview(){
           <Breadcrumb>
             <Breadcrumb.Item>CMS MANAGER SYSTEM</Breadcrumb.Item>
             <Breadcrumb.Item>
-              <a href="">Overview</a>
+              <a href="">Home</a>
             </Breadcrumb.Item>
             
           </Breadcrumb>
@@ -25,4 +25,4 @@ function Overview(){
   
 }
 
-export default Overview;
+export default Home;
