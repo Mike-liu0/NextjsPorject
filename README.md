@@ -1,6 +1,17 @@
 
 # Homework notes:
 
+Update10: (15-12-2021)
+Completed:
+1. complete the edit function
+2. link to the student page with id
+
+Not-completed & questions
+1. Do not start the teacher page
+2. some demostration of student elements in the [id] page
+3. cut some reported part and I will organize the code better in a few days. 
+4. A error about [id] page, the useeffect read the inital id value is undefined and return api error. 
+
 Update9: (11-12-2021)
 Completed:
 1. complete the unfinished function( add , edit)
