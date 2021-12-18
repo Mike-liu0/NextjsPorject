@@ -53,7 +53,7 @@ function Dashboard ({children} : any) {
             </Link></Menu.Item>
             </SubMenu>
             <SubMenu key="sub2" icon={<TeamOutlined />} title="Teacher">
-              <Menu.Item key="3">Teacher LIst</Menu.Item>
+              <Menu.Item key="3"><Link href="/dashboard/teacher">Teacher LIst</Link></Menu.Item>
        
             </SubMenu>
             <SubMenu key="sub3" icon={<TeamOutlined />} title="Course">

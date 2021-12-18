@@ -10,6 +10,8 @@ import { StuType } from '../../../lib/model/StuType';
 import { studentInfo, addNewStudent, deleteStudent, editStudent } from '../../../lib/api-service';
 
 
+const { Search } = Input;
+
 function StudentTable() {
   //set up the const related to the table
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -35,7 +37,7 @@ function StudentTable() {
     setTimeout(() => {
       setAddStudentVisible(false);
       setconfirmNewStudentLoading(false);
-      fetchData(currentPage, currentPageSize);
+      fetchData("", currentPage, currentPageSize);
     }, 2000);
   };
 
@@ -62,7 +64,7 @@ function StudentTable() {
     setTimeout(() => {
       setEditStudentVisible(false);
       setconfirmEditStudentLoading(false);
-      fetchData(currentPage, currentPageSize);
+      fetchData("", currentPage, currentPageSize);
     }, 2000);
   };
 
@@ -70,6 +72,11 @@ function StudentTable() {
     setEditStudentVisible(false);
   };
   
+  function onSearch (value:string){
+    console.log(value);
+    // searchStudentInfo(value, )
+    fetchData( value, currentPage, currentPageSize);
+  }
 
   const columns = [
     {
@@ -175,7 +182,7 @@ function StudentTable() {
                   console.log(currentPage);
                   deleteStudent(record.id); 
                   setTimeout(() => {
-                    fetchData(currentPage, currentPageSize);
+                    fetchData(_, currentPage, currentPageSize);
                   }, 500);
                 }
               }>
@@ -186,12 +193,12 @@ function StudentTable() {
   ];
   
   useEffect(() => {
-    fetchData(currentPage, currentPageSize);
+    fetchData( "", currentPage, currentPageSize);
   }, [currentPage, currentPageSize]);
   
-  async function fetchData(currentPage: number, currentPageSize: number) {
+  async function fetchData(query: string, currentPage: number, currentPageSize: number) {
     // use studentInfo func to replace the following lines
-    var data = await studentInfo(currentPage, currentPageSize);
+    var data = await studentInfo(query, currentPage, currentPageSize);
     var studentList = data.students;
     // console.log(students);
     setTotalStudent(data.total);
@@ -214,6 +221,7 @@ function StudentTable() {
           <Breadcrumb.Item>Student List</Breadcrumb.Item>
         </Breadcrumb>
         <Button type="primary" onClick={showAddModal}>+ add</Button>
+        <Search  placeholder="input search text" onSearch={onSearch} style={{ width: 200 }} />
         <Modal title="Add new student" visible={addStudentVisible} onOk={handleAddNewStudent}  confirmLoading={confirmNewStudentLoading} onCancel={handleNewStudentCancel} okText={"submit"} destroyOnClose={true}>
           <Form 
           labelCol={{ span: 7 }}

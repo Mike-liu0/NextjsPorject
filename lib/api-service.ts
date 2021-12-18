@@ -17,11 +17,40 @@ export function LoginAPI(username: string, password:string, role:string){
 }
 
 
-export function studentInfo(page:number, pagesize:number){
+export function studentInfo(query:string, page:number, pagesize:number){
     const axios = require('axios');
     return axios.get(API_URL + 'students',{
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
             params: {
+                query:query,
+                page: page,
+                limit: pagesize,
+              }
+        }).then(function (response: any) {
+            var studentValue = (response.data.data.students);
+            var totalValue = (response.data.data.total);
+            return {students: studentValue, total:totalValue};
+            
+        })
+        // .catch(function (error:any) {
+        //     // handle error
+        //     console.log(error);
+            
+        // }).then(function () {
+        //     return null;
+        // });
+        
+    
+    
+}
+
+
+export function searchStudentInfo(query:string, page:number, pagesize:number){
+    const axios = require('axios');
+    return axios.get(API_URL + 'students',{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+            params: {
+                query:query,
                 page: page,
                 limit: pagesize,
               }
