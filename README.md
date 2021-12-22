@@ -1,6 +1,13 @@
 
 # Homework notes:
 
+Update12: (22-12-2021)
+Completed:
+1. complete the student [id] page
+
+questions:
+1. the layout of the card. One is responsive and the other is not.
+
 Update11: (18-12-2021)
 Completed:
 1. complete the search student function
