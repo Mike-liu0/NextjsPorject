@@ -29,11 +29,11 @@ function Dashboard ({children} : any) {
       };
       const axios = require('axios');
       axios.post('http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/logout', {}, header)
-      .then(function (response) {
+      .then(function (response:any) {
           console.log("log out successfully");
           localStorage.removeItem('token');
           router.push('/');
-      }).catch(function (error) {
+      }).catch(function (error:any) {
         console.log(error);
       });
      

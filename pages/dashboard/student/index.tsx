@@ -1,7 +1,6 @@
 import { Table, Space, Breadcrumb, Popconfirm, Modal, Button, Form, Radio, Input, Select} from 'antd';
 import 'antd/dist/antd.css';
 import Link from 'next/link'
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Dashboard from '../../../components/dashboard';
 import { Student } from '../../../lib/model/Student';
@@ -9,13 +8,12 @@ import { StuCourse } from '../../../lib/model/StuCourse';
 import { StuType } from '../../../lib/model/StuType';
 import { studentInfo, addNewStudent, deleteStudent, editStudent } from '../../../lib/api-service';
 
-
 const { Search } = Input;
 
 function StudentTable() {
   //set up the const related to the table
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [currentPageSize, setCurrentPageSize] = React.useState(10);
+  const [currentPage, setCurrentPage] = React.useState<number>(1);
+  const [currentPageSize, setCurrentPageSize] = React.useState<number>(10);
   const [studentData, setStudentData] = React.useState<Student[] | undefined>([]);
   const [totalStudent, setTotalStudent] = React.useState<number>(200);
 
@@ -54,13 +52,12 @@ function StudentTable() {
   const [editStudentName, setEditStudentName] = React.useState<string>('');
   const [editStudentEmail, setEditStudentEmail] = React.useState<string>('');
   const [editStudentArea, setEditStudentArea] = React.useState<string>('');
-  const [editStudentType, setEditStudentType] = React.useState<StuType | null>();
+  const [editStudentType, setEditStudentType] = React.useState<number>(1);
   const [editStudentID, setEditStudentID] = React.useState<string>('');
 
   const handleEditStudent = async () => {
     setconfirmNewStudentLoading(true);
     var res = await editStudent(editStudentID, editStudentName, editStudentEmail, editStudentArea, editStudentType);
-    // setEditStudentName(res.)
     setTimeout(() => {
       setEditStudentVisible(false);
       setconfirmEditStudentLoading(false);
@@ -90,9 +87,8 @@ function StudentTable() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      // render: (text: string, record:any) => <a>{text}</a>,
        render: (text: string, record:any) => <Link href={`/dashboard/student/${record.id}`}><a>{text}</a></Link>,
-      sorter: (a:string, b:string) => a.length - b.length,
+      // sorter: (a:string, b:string) => a.length - b.length,
     },
     {
       title: 'Area',
@@ -210,6 +206,11 @@ function StudentTable() {
     setCurrentPageSize(pageSize);
   }
 
+  const pageConfig = {
+    defaultPageSize: 10, showSizeChanger: true,
+    pageSizeOptions: ['10', '20', '50'], onChange: handleChange, total: totalStudent
+  };
+
   return (
     <>
       <Dashboard>
@@ -220,8 +221,15 @@ function StudentTable() {
           </Breadcrumb.Item>
           <Breadcrumb.Item>Student List</Breadcrumb.Item>
         </Breadcrumb>
-        <Button type="primary" onClick={showAddModal}>+ add</Button>
-        <Search  placeholder="input search text" onSearch={onSearch} style={{ width: 200 }} />
+        <div>
+          <div  className='inline-block left-0'>
+           <Button type="primary" onClick={showAddModal}>+ add</Button>
+          </div>
+          <div className='inline-block absolute right-0'>
+            <Search placeholder="input search text" onSearch={onSearch} style={{ width: 200 }} />
+          </div>
+        </div>
+     
         <Modal title="Add new student" visible={addStudentVisible} onOk={handleAddNewStudent}  confirmLoading={confirmNewStudentLoading} onCancel={handleNewStudentCancel} okText={"submit"} destroyOnClose={true}>
           <Form 
           labelCol={{ span: 7 }}
@@ -260,10 +268,8 @@ function StudentTable() {
             </Form.Item>
           </Form>
         </Modal>
-        <Table columns={columns} dataSource={studentData} pagination={{
-          defaultPageSize: 10, showSizeChanger: true,
-          pageSizeOptions: ['10', '20', '50'], onChange: handleChange, total: totalStudent
-        }} scroll={{scrollToFirstRowOnChange: true}} />
+        <Table columns={columns} dataSource={studentData} pagination={pageConfig} scroll={{scrollToFirstRowOnChange: true}} />
+        
       </Dashboard>
     </>
   );
