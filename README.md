@@ -1,6 +1,37 @@
 
 # Homework notes:
 
+Dev Doc For Teacher page(22-12)
+
+Teacher Mangement Page
+
+features:
+	-Dashboard Layout 
+	-Teacher Info Table 
+	-Teacher specific info
+	...
+
+Works Items
+	1 Dashboard Layout
+		dashboard componenet
+	2 Teacher Table
+		a) set up the table 
+		b)set up the const to store the teacher list/ current page/ current page size
+		c)access api/teacher to read teacher info with page & page size
+		d)set up the columns and data for teacher (skill array concat with comma, link for [id] page 
+		e)add/edit/delete button. call api to mange the information in the backend
+		f) sort on name/ filter by the name/country
+	3. Teacher page
+		a)read the teacher info by id
+		b)card/ table/ tag component
+
+Update12: (22-12-2021)
+Completed:
+1. complete the student [id] page
+
+questions:
+1. the layout of the card. One is responsive and the other is not.
+
 Update11: (18-12-2021)
 Completed:
 1. complete the search student function
