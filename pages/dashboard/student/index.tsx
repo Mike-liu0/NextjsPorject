@@ -7,13 +7,15 @@ import { Student } from '../../../lib/model/Student';
 import { StuCourse } from '../../../lib/model/StuCourse';
 import { StuType } from '../../../lib/model/StuType';
 import { studentInfo, addNewStudent, deleteStudent, editStudent } from '../../../lib/api-service';
+import { PaginationConfig } from 'antd/lib/pagination';
+import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
 
 const { Search } = Input;
 
 function StudentTable() {
   //set up the const related to the table
   const [currentPage, setCurrentPage] = React.useState<number>(1);
-  const [currentPageSize, setCurrentPageSize] = React.useState<number>(10);
+  const [currentPageSize, setCurrentPageSize] = React.useState<number|undefined>(10);
   const [studentData, setStudentData] = React.useState<Student[] | undefined>([]);
   const [totalStudent, setTotalStudent] = React.useState<number>(200);
 
@@ -75,7 +77,9 @@ function StudentTable() {
     fetchData( value, currentPage, currentPageSize);
   }
 
-  const columns = [
+ 
+
+  const columns : ColumnType<Student>[] = [
     {
       title: 'No',
       dataIndex: 'id',
@@ -87,13 +91,19 @@ function StudentTable() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-       render: (text: string, record:any) => <Link href={`/dashboard/student/${record.id}`}><a>{text}</a></Link>,
-      // sorter: (a:string, b:string) => a.length - b.length,
+      render: (text: string, record:any) => <Link href={`/dashboard/student/${record.id}`}><a>{text}</a></Link>,
+        sorter: (a : Student, b : Student) => a.name.length - b.name.length,
     },
     {
       title: 'Area',
       dataIndex: 'country',
       key: 'area',
+      filters: [
+        { text: 'China', value: 'China' },
+        { text:   'Australia', value: 'Australia' },
+      ],
+      filterSearch: true,
+      onFilter: (value:string, record : Student) => record.country.startsWith(value),
     },
     {
       title: 'Email ',
@@ -192,7 +202,7 @@ function StudentTable() {
     fetchData( "", currentPage, currentPageSize);
   }, [currentPage, currentPageSize]);
   
-  async function fetchData(query: string, currentPage: number, currentPageSize: number) {
+  async function fetchData(query: string, currentPage: number, currentPageSize?: number) {
     // use studentInfo func to replace the following lines
     var data = await studentInfo(query, currentPage, currentPageSize);
     var studentList = data.students;
@@ -201,14 +211,14 @@ function StudentTable() {
     setStudentData(studentList);
   }
  
-  const handleChange = (page: number, pageSize: number) => {
-    setCurrentPage(page);
-    setCurrentPageSize(pageSize);
-  }
+  
 
-  const pageConfig = {
+  const pageConfig:TablePaginationConfig = {
     defaultPageSize: 10, showSizeChanger: true,
-    pageSizeOptions: ['10', '20', '50'], onChange: handleChange, total: totalStudent
+    pageSizeOptions: ['10', '20', '50'], onChange: (page: number, pageSize?: number) => {
+      setCurrentPage(page);
+      setCurrentPageSize(pageSize);
+    }, total: totalStudent
   };
 
   return (

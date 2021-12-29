@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import router from 'next/router';
+import { LogoutAPI } from '../lib/api-service';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -23,20 +24,10 @@ function Dashboard ({children} : any) {
   };
 
     // const router = useRouter();
-    const handleLogout = () => {
-      let header = {
-        headers: {'Authorization': "Bearer " + localStorage.getItem('token')}
-      };
-      const axios = require('axios');
-      axios.post('http://ec2-13-239-60-161.ap-southeast-2.compute.amazonaws.com:3001/api/logout', {}, header)
-      .then(function (response:any) {
-          console.log("log out successfully");
-          localStorage.removeItem('token');
-          router.push('/');
-      }).catch(function (error:any) {
-        console.log(error);
-      });
-     
+    const handleLogout = async () => {
+      let response = await LogoutAPI();
+      router.push('/');
+      localStorage.removeItem('token');
     }
     return (
       <Layout style={{ minHeight: '100vh' }}>

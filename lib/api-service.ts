@@ -16,8 +16,22 @@ export function LoginAPI(username: string, password:string, role:string){
         });
 }
 
+export function LogoutAPI(){
+    const axios = require('axios'); 
+    return axios.post(API_URL + 'logout', {}, {
+           headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')}
+        }).then(function (response: any) {
+            console.log(response);
+            return response;
+        }).catch(function (error :any) {
+            return error;
+        });
+}
 
-export function studentInfo(query:string, page:number, pagesize:number){
+
+////////Student API Related
+
+export function studentInfo(query:string, page:number, pagesize?:number){
     const axios = require('axios');
     return axios.get(API_URL + 'students',{
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
@@ -45,32 +59,32 @@ export function studentInfo(query:string, page:number, pagesize:number){
 }
 
 
-export function searchStudentInfo(query:string, page:number, pagesize:number){
-    const axios = require('axios');
-    return axios.get(API_URL + 'students',{
-            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
-            params: {
-                query:query,
-                page: page,
-                limit: pagesize,
-              }
-        }).then(function (response: any) {
-            var studentValue = (response.data.data.students);
-            var totalValue = (response.data.data.total);
-            return {students: studentValue, total:totalValue};
+// export function searchStudentInfo(query:string, page:number, pagesize:number){
+//     const axios = require('axios');
+//     return axios.get(API_URL + 'students',{
+//             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+//             params: {
+//                 query:query,
+//                 page: page,
+//                 limit: pagesize,
+//               }
+//         }).then(function (response: any) {
+//             var studentValue = (response.data.data.students);
+//             var totalValue = (response.data.data.total);
+//             return {students: studentValue, total:totalValue};
             
-        })
-        // .catch(function (error:any) {
-        //     // handle error
-        //     console.log(error);
+//         })
+//         // .catch(function (error:any) {
+//         //     // handle error
+//         //     console.log(error);
             
-        // }).then(function () {
-        //     return null;
-        // });
+//         // }).then(function () {
+//         //     return null;
+//         // });
         
     
     
-}
+// }
 
 export function addNewStudent(name: string, email: string, country: string, type: number){
     console.log(name);
@@ -158,4 +172,86 @@ export function editStudent(id:string, name: string, email: string, country: str
             // handle error
             console.log(error);
         });
+}
+
+
+
+////////Teacher API Related
+
+export function TeacherInfo(query:string, page:number, pagesize?:number){
+    const axios = require('axios');
+    return axios.get(API_URL + 'teachers',{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+            params: {
+                query:query,
+                page: page,
+                limit: pagesize,
+              }
+        }).then(function (response: any) {
+            var listValue = (response.data.data.teachers);
+            var totalValue = (response.data.data.total);
+            return {data: listValue, total:totalValue};
+            
+        })
+        // .catch(function (error:any) {
+        //     // handle error
+        //     console.log(error);
+            
+        // }).then(function () {
+        //     return null;
+        // });
+        
+    
+    
+}
+
+export function getTeacher(id: string){
+    const axios = require('axios');
+    return axios.get(API_URL + 'teachers/'+id,{
+        headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+            // params: {
+            //     id:id,
+            //     }
+        }).then(function (response: any) {
+            // console.log(response.data);
+            return response.data;
+        })
+        // .catch(function (error:any) {
+        //     // handle error
+        //     console.log(error);
+        // }).then(function () {
+        
+        // });
+}
+
+export function addNewTeacher(name: string, email: string, country: string){
+    const axios = require('axios');
+    
+    return axios.post(API_URL + 'teachers',{
+        name: name,
+        email: email,
+        country: country,
+      },{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+        }).then(function (response: any) {
+            console.log('add new student');
+            return response;
+        }).catch(function (error:any) {
+            // handle error
+            console.log(error);
+        }).then(function () {
+        
+        });
+}
+
+export function deleteTeacher(id: string){
+    console.log(id);
+    const axios = require('axios');
+    return axios.delete(API_URL + 'teachers/'+ id,{
+        headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+        
+        }).then(function (response: any) {
+            console.log('delete student' + id);
+            return response;
+        })
 }
