@@ -1,7 +1,7 @@
 
 # Homework notes:
 
-Dev Doc For Teacher page(22-12)
+Dev Doc For Teacher page
 
 Teacher Mangement Page
 
@@ -24,6 +24,12 @@ Works Items
 	3. Teacher page
 		a)read the teacher info by id
 		b)card/ table/ tag component
+
+Update13: (29-12-2021)
+Q : sort.name is undefined but it works. 
+    How to fix the key warning
+    Visible of madel box in teacher page
+
 
 Update12: (22-12-2021)
 Completed:
