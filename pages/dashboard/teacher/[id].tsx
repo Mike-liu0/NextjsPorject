@@ -1,12 +1,14 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import {Card, Descriptions , Tabs, Table, Row, Col, Tag} from 'antd';
+import {Card, Descriptions , Tabs, Table, Row, Col, Tag, Rate} from 'antd';
 import {getTeacher} from '../../../lib/api-service';
-import { Student } from '../../../lib/model/Student';
+
 import Dashboard from '../../../components/dashboard';
 import 'antd/dist/antd.css';
-import styles from '../../../styles/cardItem.module.css';
-import { CourseType } from '../../../lib/model/CourseType';
+import { Teacher } from '../../../lib/model/Teacher';
+import { TeacherSkill } from '../../../lib/model/TeacherSkill';
+
+
 
 function TeacherDetails () {
     const router = useRouter()
@@ -30,7 +32,7 @@ function TeacherDetails () {
     }
 
    
-
+    const { TabPane } = Tabs;
    
     return <>
         <Dashboard>
@@ -52,11 +54,11 @@ function TeacherDetails () {
                     `}</style>
                         <Descriptions layout="vertical" column={2}>
                             <Descriptions.Item label="UserName">{teacher.name}</Descriptions.Item>
-                            <Descriptions.Item label="Age">{teacher.age}</Descriptions.Item>
+                            <Descriptions.Item label="Country">{teacher.country}</Descriptions.Item>
                             <Descriptions.Item label="Email">{teacher.email}</Descriptions.Item>
                             <Descriptions.Item label="Phone">{teacher.phone}</Descriptions.Item>
                             <Descriptions.Item label="Address" >
-                            {teacher.address}
+                                  {teacher.profile?.address}
                             </Descriptions.Item>
                         
                         </Descriptions>
@@ -64,6 +66,34 @@ function TeacherDetails () {
                   
                 </Col>
               
+                <Col span={12}>
+                    <Card>
+                        <Tabs defaultActiveKey="1">
+                            <TabPane tab="About" key="1">
+                                <h1 className=" font-bold text-purple-400 text-xl">Information</h1>
+                                <Descriptions  column={1}  >
+                                    
+                                    <Descriptions.Item label="Birthday" >{teacher.profile?.birthday}</Descriptions.Item>
+        
+                                    <Descriptions.Item label="Gender" >{teacher.profile?.gender == 1 ?"male" :"female" }</Descriptions.Item>
+                                    <Descriptions.Item label="Create Time" >{teacher.profile?.createdAt}</Descriptions.Item>
+                                    <Descriptions.Item label="Update Time" >{teacher.profile?.updatedAt}</Descriptions.Item>
+
+                                </Descriptions>
+                                <h1 className=" font-bold text-purple-400 text-xl">Skills</h1>
+                                <Descriptions  column={1}  >
+                                  {teacher.skills?.map((e:TeacherSkill)=> <Descriptions.Item label={e.name} ><Rate value={e.level} className="mx-8" /></Descriptions.Item>)}  
+                                </Descriptions>
+                                <h1 className=" font-bold text-purple-400 text-xl">Description</h1>
+                                <p>{teacher.profile?.description}</p>
+                            </TabPane>
+                            <TabPane tab="Courses" key="2">
+                                {/* <Table columns={columns} dataSource={student.courses}/> */}
+                            </TabPane>
+                        
+                        </Tabs>
+                    </Card>
+                </Col>
           
             </Row>
         </Dashboard>

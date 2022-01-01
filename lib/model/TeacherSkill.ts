@@ -1,4 +1,4 @@
 export interface TeacherSkill {
-    levle?: number;
+    level?: number;
     name?: string;
 }

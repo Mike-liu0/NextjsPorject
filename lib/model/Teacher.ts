@@ -1,3 +1,4 @@
+import { TeacherProfile } from "./TeacherProfile";
 import { TeacherSkill } from "./TeacherSkill";
 
 
@@ -13,4 +14,5 @@ export interface Teacher<skill = TeacherSkill>{
     courseAmount?: number;
     profileId?:number;
     skills ?: skill[];
+    profile?: TeacherProfile;
 }

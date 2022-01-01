@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { API_URL } from '../config/config';
 import { AES } from "crypto-js";
+import { TeacherSkill } from './model/TeacherSkill';
 
 
 export function LoginAPI(username: string, password:string, role:string){
@@ -213,7 +214,7 @@ export function getTeacher(id: string){
             //     id:id,
             //     }
         }).then(function (response: any) {
-            // console.log(response.data);
+            console.log(response.data);
             return response.data;
         })
         // .catch(function (error:any) {
@@ -224,13 +225,15 @@ export function getTeacher(id: string){
         // });
 }
 
-export function addNewTeacher(name: string, email: string, country: string){
+export function addNewTeacher(name: string, email: string, country: string, phone:string, skills:TeacherSkill[]){
     const axios = require('axios');
     
     return axios.post(API_URL + 'teachers',{
         name: name,
         email: email,
         country: country,
+        phone: phone,
+        skills: skills,
       },{
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
         }).then(function (response: any) {
@@ -243,6 +246,27 @@ export function addNewTeacher(name: string, email: string, country: string){
         
         });
 }
+
+export function editTeacher(id:string,name: string, email: string, country: string, phone:string, skills:TeacherSkill[]){
+    const axios = require('axios');
+    
+    return axios.put(API_URL + 'teachers',{
+        id: id,
+        name: name,
+        email: email,
+        country: country,
+        phone: phone, 
+        skills: skills,
+      },{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+        }).then(function (response: any) {
+            return response;
+        }).catch(function (error:any) {
+            // handle error
+            console.log(error);
+        });
+}
+
 
 export function deleteTeacher(id: string){
     console.log(id);

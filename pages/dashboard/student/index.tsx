@@ -92,7 +92,7 @@ function StudentTable() {
       dataIndex: 'name',
       key: 'name',
       render: (text: string, record:any) => <Link href={`/dashboard/student/${record.id}`}><a>{text}</a></Link>,
-        sorter: (a : Student, b : Student) => a.name.length - b.name.length,
+      sorter: (a : Student, b : Student) => a.name.length - b.name.length,
     },
     {
       title: 'Area',
@@ -102,8 +102,7 @@ function StudentTable() {
         { text: 'China', value: 'China' },
         { text:   'Australia', value: 'Australia' },
       ],
-      filterSearch: true,
-      onFilter: (value:string, record : Student) => record.country.startsWith(value),
+      onFilter: (value:any, record : Student) => (record.country === value),
     },
     {
       title: 'Email ',
