@@ -25,6 +25,11 @@ Works Items
 		a)read the teacher info by id
 		b)card/ table/ tag component
 
+Update14: (1-1-2022)
+update the add, edit [id] functions
+Q : how to cope with the new skills
+
+
 Update13: (29-12-2021)
 Q : sort.name is undefined but it works. 
     How to fix the key warning
