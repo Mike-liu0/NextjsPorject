@@ -22,7 +22,8 @@ function TeacherDetails () {
         }
     }, [id]);
 
-    async function fetchData(id?:string) {
+    async function fetchData(id:string | string[]) {
+            
             var stuDetail = await getTeacher(id);
             setTeacher(stuDetail.data);
     }

@@ -5,9 +5,9 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react';
 import { Teacher } from '../../../lib/model/Teacher';
 import { TeacherSkill } from '../../../lib/model/TeacherSkill';
-import { TeacherInfo, addNewStudent, deleteStudent, editStudent, addNewTeacher, deleteTeacher } from '../../../lib/api-service';
+import { TeacherInfo, addNewTeacher, deleteTeacher , editTeacher} from '../../../lib/api-service';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
-
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 function index() {
 
      //set up the const related to the table
@@ -111,6 +111,8 @@ function index() {
       const [ModalTitle, setModalTitle] = React.useState('');
       const [Visible, setVisible] = React.useState(false);
       const [confirmLoading, setconfirmLoading] = React.useState(false);
+      
+      const [ID, setID] = React.useState<string>('');
       const [Name, setName] = React.useState('');
       const [Email, setEmail] = React.useState('');
       const [Area, setArea] = React.useState('');
@@ -128,7 +130,7 @@ function index() {
  
           if(functionName === "Edit"){
             
-            var res = await EditTeacher(Name, Email, Area, Phone, Skills);
+            var res = await editTeacher(ID, Name, Email, Area, Phone, Skills);
           }
          
          setTimeout(() => {
@@ -155,6 +157,19 @@ function index() {
         setModalTitle("Edit Teacher");
         setFunctionName("Edit");
       };
+
+      const updateFieldChanged = (name:string, index:number) => (event:any) => {
+        let newArr = Skills.map((item, i) => {
+          if (index == i) {
+            return { ...item, [name]: event.target.value };
+          } else {
+            return item;
+          }
+        });
+        setSkills(newArr);
+        console.log(Skills);
+      };
+      
 
     return (
         <>
@@ -211,32 +226,45 @@ function index() {
                     onChange={e => setPhone(e.target.value)}
                   />
                  </Form.Item>
-                 <Form.Item label="Skill"
-                name="Skill"
-                rules={[{ required: true}]}>
+                 <Form.Item label="Skill" name="Skill" rules={[{ required: true}]}>
                  
-                 <Row>
-                    <Col span={12}>
-                      <Input
-                      type="Skill"
-                      placeholder="Skill"
-                      onChange={e => {
-                        console.log(e)
+                
+               
+                <Form.List name="skill">
+                  {(Skills, { add, remove }) => (
+                    <>
+                      {Skills.map(({ key, name, ...restSKill }) => (
+                        <Space key={name} style={{ display: 'flex',  marginBottom: 8 }} align="baseline">
+                            <Row>
+                              <Col span={12}>
+                              <Input type="Skill" placeholder="Skill" onChange={e => {
+                                  updateFieldChanged("name", name);
+                                 }}
+                              />
+                              </Col>
+                              <Col span={12}>
+                                <Slider
+                                  min={1}
+                                  max={5}
+                                 
+                                 
+                                />
+                              </Col>
+                              
+                            </Row>
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </Space>
                         
-                      }}
-                    />
-                    </Col>
-                    <Col span={12}>
-                      <Slider
-                        min={1}
-                        max={20}
-                        // onChange={e => setPhone(e.target.value)}
-                        // value={typeof inputValue === 'number' ? inputValue : 0}
-                      />
-                    </Col>
-                    
-                  </Row>
-                  </Form.Item>
+                      ))}
+                      <Form.Item>
+                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                          Add Skill
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+                </Form.Item>
               </Form>
             </Modal>
             <Table columns={columns} dataSource={Data}   pagination={pageConfig} scroll={{scrollToFirstRowOnChange: true}} />

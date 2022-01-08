@@ -206,7 +206,7 @@ export function TeacherInfo(query:string, page:number, pagesize?:number){
     
 }
 
-export function getTeacher(id: string){
+export function getTeacher(id: string | string[]){
     const axios = require('axios');
     return axios.get(API_URL + 'teachers/'+id,{
         headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},

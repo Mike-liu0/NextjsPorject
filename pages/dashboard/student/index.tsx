@@ -207,7 +207,8 @@ function StudentTable() {
     var studentList = data.students;
     // console.log(students);
     setTotalStudent(data.total);
-    setStudentData(studentList);
+    // setStudentData(studentList);
+    setStudentData(studentList.map((s:Student) => {return {...s, key: s.id.toString()}}));
   }
  
   
@@ -277,7 +278,7 @@ function StudentTable() {
             </Form.Item>
           </Form>
         </Modal>
-        <Table columns={columns} dataSource={studentData} pagination={pageConfig} scroll={{scrollToFirstRowOnChange: true}} />
+        <Table rowKey={'id'} columns={columns} dataSource={studentData} pagination={pageConfig} scroll={{scrollToFirstRowOnChange: true}} />
         
       </Dashboard>
     </>

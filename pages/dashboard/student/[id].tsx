@@ -116,7 +116,7 @@ function StudentDetails () {
                                     
                                 </Descriptions>
                                 <h1 className=" font-bold text-purple-400 text-xl">Interesting</h1>
-                                   {student.interest.map((e:string)=> <Tag color="volcano">{e}</Tag>)}
+                                   {student.interest?.map((e:string)=> <Tag color="volcano">{e}</Tag>)}
                                 <h1 className=" font-bold text-purple-400 text-xl">Description</h1>
                                 <p>{student.description}</p>
                             </TabPane>
