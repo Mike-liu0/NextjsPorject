@@ -17,20 +17,32 @@ function index() {
   //read course data
   async function fetchData( currentPage: number, currentPageSize?: number) {
     
-    let response = await CourseInfo( currentPage, currentPageSize);
-    setTotal(response.total);
-    // setData(response.data);
-    setData(response.data.map((t:Course) => {return {...t, key: t.id.toString()}}));
-    setLoading(false);
+   
+    
   }
 
 
-  const loadMoreData = () => {
+  const loadMoreData = async () => {
     if (loading) {
       return;
     }
     setLoading(true);
-    fetchData(currentPage, currentPageSize);
+    setCurrentPage(currentPage + 1);
+    console.log(currentPage);
+    // fetchData(currentPage + 1, currentPageSize);
+    const response = await CourseInfo( currentPage, currentPageSize);
+    
+    // response.then((response: { data: Course[], total:number }) => {
+    //   setData([...data, ...response.data]);
+    //   setTotal(response.total);
+    // })
+    
+    console.log(response);
+    setData([...data, ...response.data]);
+    setTotal(response.total);
+    
+    setLoading(false);
+    console.log(data);
   
     // fetch('https://randomuser.me/api/?results=10&inc=name,gender,email,nat,picture&noinfo')
     //   .then(res => res.json())
@@ -45,7 +57,7 @@ function index() {
 
   useEffect(() => {
     loadMoreData();
-  }, []);
+  }, [currentPage, currentPageSize]);
 
     return (
         <>
@@ -62,7 +74,7 @@ function index() {
                 <InfiniteScroll
                     dataLength={data.length}
                     next={loadMoreData}
-                    hasMore={data.length < 50}
+                    hasMore={total ? data.length < total : false}
                     endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
                     scrollableTarget="scrollableDiv"
                     loader={<Skeleton  active />}

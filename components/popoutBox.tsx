@@ -1,6 +1,6 @@
 import React from 'react'
 import {  Modal, Form, Radio, Input, Select} from 'antd';
-import { studentInfo, addNewStudent, deleteStudent, editStudent } from '../lib/api-service';
+import { studentInfo, addNewStudent, deleteStudent, editStudent, addNewTeacher } from '../lib/api-service';
 import { AddTeacherFormProps } from '../lib/model/AddTeacherFormProps';
 function ModalBox(props:AddTeacherFormProps) {
     const [form] = Form.useForm();
@@ -9,8 +9,19 @@ function ModalBox(props:AddTeacherFormProps) {
     return (
           <Form 
               labelCol={{ span: 6 }}
-              wrapperCol={{ span: 14 }}
-              layout="horizontal"
+              wrapperCol={{ offset: 1 }}
+              form={form}
+              validateMessages={valideMessages}
+              onFinish={(values) => {
+                const response =  addNewTeacher(values);
+                response.then((response) => {
+                  const { data } = response;
+                  if (onFinish && data){
+                    onFinish(data);
+                  }
+                })
+              }}
+        
               initialValues={
                 name: teacher?.name,
                 email: teacher?.email,
