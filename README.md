@@ -1,3 +1,9 @@
+Update15: (12-1-2022)
+Q: 
+1. something going wrong with the React.useState.. Red line but it works. 
+2. I have some problems about the save skill data to usestate. 
+3. next function for the course card 
+
 
 # Homework notes:
 
