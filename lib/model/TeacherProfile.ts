@@ -7,5 +7,4 @@ export interface TeacherProfile{
     createdAt?: string;
     updatedAt?: string;
     address?: string;
-
 }

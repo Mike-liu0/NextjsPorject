@@ -48,7 +48,7 @@ function Dashboard ({children} : any) {
        
             </SubMenu>
             <SubMenu key="sub3" icon={<TeamOutlined />} title="Course">
-              <Menu.Item key="4">All Course</Menu.Item>
+              <Menu.Item key="4"><Link href="/dashboard/course">All Course</Link></Menu.Item>
               <Menu.Item key="5">Add Course</Menu.Item>
               <Menu.Item key="6">Delete Course</Menu.Item>
        

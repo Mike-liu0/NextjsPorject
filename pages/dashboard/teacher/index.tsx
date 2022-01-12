@@ -15,14 +15,14 @@ function index() {
     const [currentPageSize, setCurrentPageSize] = React.useState<number|undefined>(10);
     const [Data, setData] = React.useState<Teacher[] | undefined>([]);
     const [total, setTotal] = React.useState<number>(200);
-
+    const { Search } = Input;
 
     const columns = [
         {
           title: 'No',
-          dataIndex: 'id',
-          key: 'id',
-          render: (text: string) => text,
+          // dataIndex: 'id',
+          // key: 'id',
+          render: (text:string, record:any, index:number) => (index+1),
         
         },
         {
@@ -91,7 +91,8 @@ function index() {
         
         let response = await TeacherInfo(query, currentPage, currentPageSize);
         setTotal(response.total);
-        setData(response.data);
+        // setData(response.data);
+        setData(response.data.map((t:Teacher) => {return {...t, key: t.id.toString()}}));
       }
 
       const pageConfig:TablePaginationConfig = {
@@ -101,6 +102,10 @@ function index() {
           setCurrentPageSize(pageSize);
         }, total: total
       };
+
+      function onSearch (value:string){
+        fetchData( value, currentPage, currentPageSize);
+      }
 
 
       //madel box
@@ -122,6 +127,7 @@ function index() {
  
  
      const handleOk = async () => {
+          console.log(Skills);
           setconfirmLoading(true);
           if(functionName === "Add"){
             
@@ -158,18 +164,7 @@ function index() {
         setFunctionName("Edit");
       };
 
-      const updateFieldChanged = (name:string, index:number) => (event:any) => {
-        let newArr = Skills.map((item, i) => {
-          if (index == i) {
-            return { ...item, [name]: event.target.value };
-          } else {
-            return item;
-          }
-        });
-        setSkills(newArr);
-        console.log(Skills);
-      };
-      
+     
 
     return (
         <>
@@ -181,23 +176,29 @@ function index() {
             </Breadcrumb.Item>
             <Breadcrumb.Item>Teacher List</Breadcrumb.Item>
             </Breadcrumb>
+            
             <div>
                 <div  className='inline-block left-0'>
                 <Button type="primary" style={{ margin:10}} onClick={showAddModal}>+ add</Button>
                 </div>
                 <div className='inline-block absolute right-0'>
-                    {/* <Search placeholder="input search text" onSearch={onSearch} style={{ width: 200 }} /> */}
+                    <Search placeholder="input search text" onSearch={onSearch}  style={{ width: 200, marginRight:50}} />
                 </div>
             </div>
             <Modal title={ModalTitle} visible={Visible} onOk={handleOk}  confirmLoading={confirmLoading} onCancel={handleCancel} okText={"submit"} destroyOnClose={true}>
               <Form 
-              labelCol={{ span: 7 }}
-              wrapperCol={{ span: 14 }}
-              layout="horizontal">
+                labelCol={{ span: 7 }}
+                wrapperCol={{ span: 14 }}
+                layout="horizontal"
+                // initialValues={
+                  // skills: [{name:'', level:2}],
+                // }
+              
+              >
                 <Form.Item label="Name"
                 name="name"
                 rules={[{ required: true}]}>
-                <Input type="text" placeholder="teacher name" onChange={e => setName(e.target.value)}/>
+                   <Input type="text" placeholder="teacher name" onChange={e => setName(e.target.value)}/>
                 </Form.Item>
                 <Form.Item label="Email"
                 name="email"
@@ -218,45 +219,50 @@ function index() {
                 </Select>
                 </Form.Item>
                 <Form.Item label="Phone"
-                name="Phone"
-                rules={[{ required: true}]}>
-                     <Input
-                    type="Phone"
-                    placeholder="Phone"
-                    onChange={e => setPhone(e.target.value)}
-                  />
+                  name="Phone"
+                  rules={[{ required: true}]}>
+                      <Input
+                      type="Phone"
+                      placeholder="Phone"
+                      onChange={e => setPhone(e.target.value)}
+                      />
                  </Form.Item>
-                 <Form.Item label="Skill" name="Skill" rules={[{ required: true}]}>
-                 
-                
-               
-                <Form.List name="skill">
-                  {(Skills, { add, remove }) => (
+                 <Form.Item label="Skill" >  </Form.Item>
+
+                <Form.List name="skills">
+                  {(fields, { add, remove }) => (
                     <>
-                      {Skills.map(({ key, name, ...restSKill }) => (
-                        <Space key={name} style={{ display: 'flex',  marginBottom: 8 }} align="baseline">
-                            <Row>
-                              <Col span={12}>
-                              <Input type="Skill" placeholder="Skill" onChange={e => {
-                                  updateFieldChanged("name", name);
-                                 }}
-                              />
-                              </Col>
-                              <Col span={12}>
-                                <Slider
+                      {fields.map(( field, index ) => (
+                          <Row align='middle' key={field.name}>
+                            <Col span={7}>
+                              <Form.Item 
+                              label="Name"
+                              {...field}
+                              name={[field.name, 'name']}
+                              fieldKey={[field.fieldKey, 'name']}
+                              rules={[{required:true}]}
+                              >
+                                <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={13}>
+                              <Form.Item 
+                                label="Level"
+                                {...field}
+                                name={[field.name, 'level']}
+                                fieldKey={[field.fieldKey, 'level']}
+                                initialValue={2}
+                              >
+                              <Slider
                                   min={1}
                                   max={5}
-                                 
-                                 
                                 />
-                              </Col>
-                              
-                            </Row>
-                          <MinusCircleOutlined onClick={() => remove(name)} />
-                        </Space>
-                        
+                              </Form.Item>
+                            </Col>
+                            <MinusCircleOutlined onClick={() => remove(field.name)} />
+                          </Row>
                       ))}
-                      <Form.Item>
+                      <Form.Item >
                         <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                           Add Skill
                         </Button>
@@ -264,7 +270,7 @@ function index() {
                     </>
                   )}
                 </Form.List>
-                </Form.Item>
+              
               </Form>
             </Modal>
             <Table columns={columns} dataSource={Data}   pagination={pageConfig} scroll={{scrollToFirstRowOnChange: true}} />

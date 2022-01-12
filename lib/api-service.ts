@@ -279,3 +279,45 @@ export function deleteTeacher(id: string){
             return response;
         })
 }
+
+
+// Courses API
+
+
+export function CourseInfo( page:number, pagesize?:number){
+    const axios = require('axios');
+    return axios.get(API_URL + 'courses',{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+            params: {
+                page: page,
+                limit: pagesize,
+              }
+        }).then(function (response: any) {
+            var listValue = (response.data.data.courses);
+            var totalValue = (response.data.data.total);
+            return {data: listValue, total:totalValue};
+            
+        })
+     
+    
+    
+}
+
+export function getCourse(id: string | string[]){
+    const axios = require('axios');
+    return axios.get(API_URL + 'courses/detail',{
+        headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+            params: {
+                id:id,
+                }
+        }).then(function (response: any) {
+            console.log(response.data);
+            return response.data;
+        })
+        // .catch(function (error:any) {
+        //     // handle error
+        //     console.log(error);
+        // }).then(function () {
+        
+        // });
+}
