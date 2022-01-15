@@ -83,7 +83,7 @@ function TeacherDetails () {
                                 </Descriptions>
                                 <h1 className=" font-bold text-purple-400 text-xl">Skills</h1>
                                 <Descriptions  column={1}  >
-                                  {teacher.skills?.map((e:TeacherSkill)=> <Descriptions.Item label={e.name} ><Rate value={e.level} className="mx-8" /></Descriptions.Item>)}  
+                                  {teacher.skills?.map((e:TeacherSkill)=> <Descriptions.Item label={e.name} key={e.name} ><Rate value={e.level} className="mx-8" /></Descriptions.Item>)}  
                                 </Descriptions>
                                 <h1 className=" font-bold text-purple-400 text-xl">Description</h1>
                                 <p>{teacher.profile?.description}</p>

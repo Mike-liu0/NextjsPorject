@@ -1,5 +1,5 @@
 import Dashboard from '../../../components/dashboard';
-import { Table, Space, Breadcrumb,List,Card,  Button, Row, Col, message, Avatar, Skeleton, Divider } from 'antd';
+import { Table, Space, Breadcrumb,List,Card,  Button,Image, Row, Col, message, Avatar, Skeleton, Divider } from 'antd';
 import 'antd/dist/antd.css';
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react';
@@ -8,7 +8,7 @@ import { Course } from '../../../lib/model/Course';
 import {CourseInfo} from '../../../lib/api-service'
 import {HeartFilled} from '@ant-design/icons'
 
-function index() {
+function Index() {
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState<Course[]>([]);
   const [total, setTotal] = React.useState<number>();
@@ -76,7 +76,7 @@ function index() {
                     next={loadMoreData}
                     hasMore={total ? data.length < total : false}
                     endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
-                    scrollableTarget="scrollableDiv"
+      
                     loader={<Skeleton  active />}
                 >
         
@@ -86,7 +86,7 @@ function index() {
                         renderItem={item => (
                           <List.Item>
                               <Card
-                               cover={<img src={item.cover} style={{height:300}} />}
+                               cover={<Image src={item.cover} alt='CourseCover' style={{height:300}} />}
                               >
                                 <p style={{fontWeight:'bold'}}>{item.name}</p>
                                 <div style={{display: 'flex', alignContent:'center', justifyContent:'space-between', borderBottom: '1px solid grey' }} >
@@ -124,4 +124,4 @@ function index() {
     )
 }
 
-export default index
+export default Index

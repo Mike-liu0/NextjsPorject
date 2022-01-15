@@ -289,7 +289,7 @@ export function CourseInfo( page:number, pagesize?:number){
     return axios.get(API_URL + 'courses',{
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
             params: {
-               
+                page: page,
                 limit: pagesize,
               }
         }).then(function (response: any) {

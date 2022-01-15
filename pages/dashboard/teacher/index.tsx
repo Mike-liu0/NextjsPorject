@@ -8,7 +8,7 @@ import { TeacherSkill } from '../../../lib/model/TeacherSkill';
 import { TeacherInfo, addNewTeacher, deleteTeacher , editTeacher} from '../../../lib/api-service';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-function index() {
+function Index() {
 
      //set up the const related to the table
     const [currentPage, setCurrentPage] = React.useState<number>(1);
@@ -242,7 +242,7 @@ function index() {
                               fieldKey={[field.fieldKey, 'name']}
                               rules={[{required:true}]}
                               >
-                                <Input />
+                                <Input  type="text" placeholder="skill name" onChange={e => {Skills[field.name].name = e.target.value ; setSkills(Skills)}}/>
                                 </Form.Item>
                             </Col>
                             <Col span={13}>
@@ -256,6 +256,7 @@ function index() {
                               <Slider
                                   min={1}
                                   max={5}
+                                  onChange={e => {Skills[field.name].level = e ; setSkills(Skills)}}
                                 />
                               </Form.Item>
                             </Col>
@@ -263,7 +264,7 @@ function index() {
                           </Row>
                       ))}
                       <Form.Item >
-                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                        <Button type="dashed" onClick={() => {add(); setSkills([...Skills, {name:'', level:2}])}} block icon={<PlusOutlined />}>
                           Add Skill
                         </Button>
                       </Form.Item>
@@ -282,4 +283,4 @@ function index() {
     )
 }
 
-export default index
+export default Index

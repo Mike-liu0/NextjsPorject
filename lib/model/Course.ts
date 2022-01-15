@@ -1,13 +1,36 @@
-export interface Course {
+import { CourseSales } from "./CourseSales";
+import { CourseType } from "./CourseType";
+
+export interface Course<sales = CourseSales, courseType = CourseType, courseSchedule = CourseSchedule> {
     createAt?: string;
     updateAt?: string ;
     startTime?: string;
     key: string;
     id: number;
+    uid?: string;
     name?:string;
     cover?:string;
     duration?:number;
     teacherName?:string;
     maxStudents?:number;
     star?:number;
+    price?:number;
+    sales?: sales;
+    detail?:string;
+    type?:courseType[];
+    schedule?: courseSchedule;
+
+}
+
+
+export interface CourseSchedule<chapter = CourseChapter>{
+    chapters: chapter[];
+    classTime: string[];
+}
+export interface CourseChapter {
+    content: string;
+    createdAt: string;
+    id: number;
+    name: string;
+    order: number;
 }
