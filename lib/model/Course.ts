@@ -19,13 +19,15 @@ export interface Course<sales = CourseSales, courseType = CourseType, courseSche
     detail?:string;
     type?:courseType[];
     schedule?: courseSchedule;
+    teacherId: number;
 
 }
 
 
 export interface CourseSchedule<chapter = CourseChapter>{
-    chapters: chapter[];
-    classTime: string[];
+    chapters?: chapter[];
+    classTime?: string[];
+    current?: number;
 }
 export interface CourseChapter {
     content: string;

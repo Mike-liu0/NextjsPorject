@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import {Card, Descriptions , Tabs, Table, Row, Col, Tag, Rate, Image, Breadcrumb, Collapse , List} from 'antd';
+import {Card, Descriptions , Tabs, Table, Row, Col, Tag, Rate, Image, Breadcrumb, Collapse , List, Badge, Steps} from 'antd';
 import {getCourse} from '../../../lib/api-service';
 
 import Dashboard from '../../../components/dashboard';
@@ -15,6 +15,8 @@ function CourseDetails () {
     const { id } = router.query;
     const [course, setCourse] = React.useState<Course>();
     const { Panel } = Collapse;
+    const { Step } = Steps;
+
     
     useEffect(() => { 
         if(id !== undefined){
@@ -31,14 +33,14 @@ function CourseDetails () {
         return <p>loading</p>
     }
 
-    function showTime(time:string) {
-        course?.schedule?.classTime.map(e => {
-            const strs = e.split(" ");
-            console.log(strs);
-            if(strs[0] === time){
-                return strs[1];
+    function showTime(time:string) : any{
+        const classTime = course?.schedule?.classTime?.map<String[]>(e => e.split(" ")).find(e => {
+            if(e[0] === time){
+                return true;
             }
+            return false;
         })
+        return classTime ? classTime[1] : '';
     }
    
     return <>
@@ -106,10 +108,23 @@ function CourseDetails () {
                         <p>{course.startTime}</p>
                     </div>
                     <div>
-                        <h5>Status</h5>
+                        
+                        <Badge color={'orange'} dot={true} offset={[5, 5]}>
+                         <h5>Status</h5>
+                        </Badge>
                     </div>
                     <div>
-                        <p>{course.name}</p>
+                           <Steps current={ (course.schedule?.chapters?.find(e => e.id === course.schedule?.current)) ? course.schedule?.chapters?.indexOf(course.schedule?.chapters?.find(e => e.id === course.schedule?.current)) : 0} size={'small'} style={{width: 'auto'}}>
+                           {course.schedule?.chapters?.map(e=>{
+                               
+                                return(
+                                    <Step key={e.id} title={e.name} />
+                                )
+                           
+                            })}
+                         
+                        
+                            </Steps>
                     </div>
                        
                     <div>
@@ -123,13 +138,13 @@ function CourseDetails () {
                     </div>
                     <div>
                         <Descriptions layout="vertical" size="small" bordered>
-                            <Descriptions.Item label="Sunday">{showTime}</Descriptions.Item>
-                            <Descriptions.Item label="Monday">{showTime}</Descriptions.Item>
-                            <Descriptions.Item label="Tuesday">$80.00</Descriptions.Item>
-                            <Descriptions.Item label="Wednesday">$80.00</Descriptions.Item>
-                            <Descriptions.Item label="Thursday">$80.00</Descriptions.Item>
-                            <Descriptions.Item label="Friday">$80.00</Descriptions.Item>
-                            <Descriptions.Item label="Saturday">$80.00</Descriptions.Item>
+                            <Descriptions.Item label="Sunday">{showTime("Sunday")}</Descriptions.Item>
+                            <Descriptions.Item label="Monday">{showTime("Monday")}</Descriptions.Item>
+                            <Descriptions.Item label="Tuesday">{showTime("Tuesday")}</Descriptions.Item>
+                            <Descriptions.Item label="Wednesday">{showTime("Wednesday")}</Descriptions.Item>
+                            <Descriptions.Item label="Thursday">{showTime("Thursday")}</Descriptions.Item>
+                            <Descriptions.Item label="Friday">{showTime("Friday")}</Descriptions.Item>
+                            <Descriptions.Item label="Saturday">{showTime("Saturday")}</Descriptions.Item>
                            
                         </Descriptions>
                     </div>
@@ -150,11 +165,14 @@ function CourseDetails () {
                     </div>
                     <div>
                     <Collapse >
-                        {course.schedule?.chapters.map(e=>{
-                            console.log(e);
-                            <Panel header={e.name} key={e.id}>
-                              <p>{e.content}</p>
-                            </Panel>
+                        {course.schedule?.chapters?.map(e=>{
+                            
+                            return(
+                                <Panel header={e.name} key={e.id}>
+                                <p>{e.content}</p>
+                              </Panel>
+                            )
+                           
                         })}
                         
                         

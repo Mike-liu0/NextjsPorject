@@ -2,6 +2,7 @@ import axios from 'axios';
 import { API_URL } from '../config/config';
 import { AES } from "crypto-js";
 import { TeacherSkill } from './model/TeacherSkill';
+import { Course } from './model/Course';
 
 
 export function LoginAPI(username: string, password:string, role:string){
@@ -319,4 +320,33 @@ export function getCourse(id: string | string[]){
         // }).then(function () {
         
         // });
+}
+
+
+export function addNewCourse(course: Course){
+    const axios = require('axios');
+    
+    return axios.post(API_URL + 'courses',{
+        name: course.name,
+        uid: course.uid,
+        detail: course.detail,
+        startTime: course.startTime,
+        price: course.price,
+        maxStudents: course.maxStudents,
+        duration: course.duration,
+        durationUnit: 1,
+        cover: course.cover,
+        teacherId: course.teacherId,
+        type: {name: course.type},
+      },{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+        }).then(function (response: any) {
+            console.log('add new Course');
+            return response;
+        }).catch(function (error:any) {
+            // handle error
+            console.log(error);
+        }).then(function () {
+        
+        });
 }
