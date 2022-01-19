@@ -1,3 +1,10 @@
+Update15: (15-1-2022)
+Q: 
+1. The panel in [id] course page is not shown.
+2. how to cope with the class time data.
+
+
+
 Update15: (12-1-2022)
 Q: 
 1. something going wrong with the React.useState.. Red line but it works. 
