@@ -1,20 +1,26 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import {Card, Descriptions , Tabs, Table, Row, Col, Tag, Rate, Image, Breadcrumb, Collapse , List, Badge, Steps,  Form,
-    Input, InputNumber,Cascader,Select, Checkbox,Button,AutoComplete,Upload} from 'antd';
-import {addNewCourse, getCourse} from '../../../lib/api-service';
+    Input, InputNumber,Cascader,Select,DatePicker, Checkbox,Button,AutoComplete,Upload} from 'antd';
+import {addNewCourse, getCourse ,getCourseTypes,getTeacher, TeacherInfo} from '../../../lib/api-service';
 import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
 import Dashboard from '../../../components/dashboard';
 import 'antd/dist/antd.css';
 import { Course } from '../../../lib/model/Course';
 import {HeartFilled} from '@ant-design/icons'
 import {v4 as uuidv4} from 'uuid';
+import { Teacher } from '../../../lib/model/Teacher';
+import { apiResolver } from 'next/dist/server/api-utils';
+import { CourseType } from '../../../lib/model/CourseType';
+import { type } from 'os';
 
 
 function AddCourse () {
     const { Step } = Steps;
     const [form] = Form.useForm();
     const { Option } = Select;
+    const [teachers, setTeachers] = React.useState<Teacher[]>([]);
+    const [courseTypes, setCourseTypes] = React.useState<CourseType[]>([]);
 
     let uuid = uuidv4();
     console.log(uuid);
@@ -24,6 +30,7 @@ function AddCourse () {
       };
 
 
+
      const normFile = (e: any) => {
         console.log('Upload event:', e);
         if (Array.isArray(e)) {
@@ -31,6 +38,25 @@ function AddCourse () {
         }
         return e && e.fileList;
       };
+
+      async function fetchTypes (){
+        let response = await getCourseTypes();
+        setCourseTypes(response);
+      }
+
+      async function fetchTeachers (query:string){
+        let response = await getTeacher(query);
+        return response.data;
+        // setTeachers(response);
+        // console.log(response);
+      }
+
+      useEffect(() => {
+        fetchTypes();
+        // fetchTeachers();
+      }, [])
+
+
     return (
     <>
         <Dashboard>
@@ -84,31 +110,61 @@ function AddCourse () {
                     },
                     ]}
                 >
+                    {/* <Select
+                        placeholder="Select teacher"
+                        showSearch
+                        filterOption={false}
+                        onSearch={(query: string) =>{
+                            let teachersData = fetchTeachers(query);
+                            console.log(teachersData);
+                            if(! teachersData){
+                                setTeachers(teachersData);
+                            }
+                        }}
+                    >
+                        {
+                            teachers.map(({id, name})=>{
+                                <Select.Option key={id} value={id}>
+                                    {name}
+                                </Select.Option>
+                            })
+                        }
+                    </Select> */}
                     <Input />
                 </Form.Item>
                 
                 </Col>
-                <Col>
+                <Col span={4}>
                 <Form.Item
                     name="type"
                     label="Type"
                     rules={[
                     {
-                        required: true,
-                        message: 'Please input name',
+                        required: true
                     },
                     ]}
                 >
-                    <Input />
+                    <Select
+                        placeholder="Select Type"
+                        mode='multiple'
+                    >
+                        {    
+                            courseTypes.map((type)=> (
+                                <Option key={type.id} value={type.id}> {type.name} </Option>
+                            ))
+                        } 
+                      
+                    </Select>
                 </Form.Item>
                 
                 </Col>
                 <Col>
                 <Form.Item
-                    name="code"
+                    name="uid"
                     label="Course Code"
+                    
                 >
-                    <Input defaultValue={uuid} disabled/>
+                    <Input defaultValue={uuid} value={uuid} disabled/>
                 </Form.Item>
                 
                 </Col>
@@ -116,48 +172,48 @@ function AddCourse () {
             <Row>
                 <Col>
                 <Form.Item
-                    name="code"
+                    name="startTime"
                     label="Start Date"
                     rules={[
                     {
                         required: true,
-                        message: 'Please input name',
+                        
                     },
                     ]}
                 >
-                    <Input />
+                   <DatePicker />
                 </Form.Item>
                 <Form.Item
-                    name="code"
+                    name="price"
                     label="Price"
                     rules={[
                     {
                         required: true,
-                        message: 'Please input name',
+                       
                     },
                     ]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    name="code"
+                    name="maxStudents"
                     label="Student Limit"
                     rules={[
                     {
                         required: true,
-                        message: 'Please input name',
+                       
                     },
                     ]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    name="code"
+                    name="duration"
                     label="Duration"
                     rules={[
                     {
                         required: true,
-                        message: 'Please input name',
+                     
                     },
                     ]}
                 >
@@ -171,7 +227,7 @@ function AddCourse () {
                     rules={[
                     {
                         required: true,
-                        message: 'Please input name',
+                      
                     },
                     ]}
                 >
@@ -180,8 +236,8 @@ function AddCourse () {
                 
                 </Col>
                 <Col>
-                <Form.Item label="Cover">
-                    <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
+                <Form.Item  label="Cover">
+                    <Form.Item valuePropName="fileList" getValueFromEvent={normFile} noStyle>
                     <Upload.Dragger name="files" action="/upload.do">
                         <p className="ant-upload-drag-icon">
                         <InboxOutlined />

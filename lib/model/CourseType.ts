@@ -1,4 +1,4 @@
 export interface CourseType {
-    id?: number;
-    name?: string;
+    id: number;
+    name: string;
 }

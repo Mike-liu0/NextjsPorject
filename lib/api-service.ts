@@ -207,6 +207,8 @@ export function TeacherInfo(query:string, page:number, pagesize?:number){
     
 }
 
+
+
 export function getTeacher(id: string | string[]){
     const axios = require('axios');
     return axios.get(API_URL + 'teachers/'+id,{
@@ -321,9 +323,54 @@ export function getCourse(id: string | string[]){
         
         // });
 }
+export function getCourseTypes(){
+    const axios = require('axios');
+    return axios.get(API_URL + 'courses/type',{
+        headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+           
+        }).then(function (response: any) {
+            console.log(response.data.data);
+            return response.data.data;
+        })
+        // .catch(function (error:any) {
+        //     // handle error
+        //     console.log(error);
+        // }).then(function () {
+        
+        // });
+}
+
 
 
 export function addNewCourse(course: Course){
+    const axios = require('axios');
+    
+    return axios.post(API_URL + 'courses',{
+        name: course.name,
+        uid: course.uid,
+        detail: course.detail,
+        startTime: course.startTime,
+        price: course.price,
+        maxStudents: course.maxStudents,
+        duration: course.duration,
+        durationUnit: 1,
+        cover: course.cover,
+        teacherId: course.teacherId,
+        // type: course.type,
+      },{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+        }).then(function (response: any) {
+            console.log('add new Course');
+            return response;
+        }).catch(function (error:any) {
+            // handle error
+            console.log(error);
+        }).then(function () {
+        
+        });
+}
+
+export function editCourse(course: Course){
     const axios = require('axios');
     
     return axios.post(API_URL + 'courses',{

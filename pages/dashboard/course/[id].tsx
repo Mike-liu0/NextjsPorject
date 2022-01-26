@@ -114,7 +114,7 @@ function CourseDetails () {
                         </Badge>
                     </div>
                     <div>
-                           <Steps current={ (course.schedule?.chapters?.find(e => e.id === course.schedule?.current)) ? course.schedule?.chapters?.indexOf(course.schedule?.chapters?.find(e => e.id === course.schedule?.current)) : 0} size={'small'} style={{width: 'auto'}}>
+                           <Steps current={ course.schedule?.chapters?.findIndex((item) => item.id === course.schedule?.current)} size={'small'} style={{paddingRight:'60px'}}>
                            {course.schedule?.chapters?.map(e=>{
                                
                                 return(
@@ -138,13 +138,13 @@ function CourseDetails () {
                     </div>
                     <div>
                         <Descriptions layout="vertical" size="small" bordered>
-                            <Descriptions.Item label="Sunday">{showTime("Sunday")}</Descriptions.Item>
-                            <Descriptions.Item label="Monday">{showTime("Monday")}</Descriptions.Item>
-                            <Descriptions.Item label="Tuesday">{showTime("Tuesday")}</Descriptions.Item>
-                            <Descriptions.Item label="Wednesday">{showTime("Wednesday")}</Descriptions.Item>
-                            <Descriptions.Item label="Thursday">{showTime("Thursday")}</Descriptions.Item>
-                            <Descriptions.Item label="Friday">{showTime("Friday")}</Descriptions.Item>
-                            <Descriptions.Item label="Saturday">{showTime("Saturday")}</Descriptions.Item>
+                            <Descriptions.Item label="Sunday" span={0.15}>{showTime("Sunday")}</Descriptions.Item>
+                            <Descriptions.Item label="Monday" span={0.15}>{showTime("Monday")}</Descriptions.Item>
+                            <Descriptions.Item label="Tuesday" span={0.15}>{showTime("Tuesday")}</Descriptions.Item>
+                            <Descriptions.Item label="Wednesday"span={0.15}>{showTime("Wednesday")}</Descriptions.Item>
+                            <Descriptions.Item label="Thursday"span={0.15}>{showTime("Thursday")}</Descriptions.Item>
+                            <Descriptions.Item label="Friday"span={0.15}>{showTime("Friday")}</Descriptions.Item>
+                            <Descriptions.Item label="Saturday"span={0.15}>{showTime("Saturday")}</Descriptions.Item>
                            
                         </Descriptions>
                     </div>
