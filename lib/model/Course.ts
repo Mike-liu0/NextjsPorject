@@ -28,6 +28,9 @@ export interface CourseSchedule<chapter = CourseChapter>{
     chapters?: chapter[];
     classTime?: string[];
     current?: number;
+    status?: number;
+    scheduleId?: number;
+    courseId?: number;
 }
 export interface CourseChapter {
     content: string;

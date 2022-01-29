@@ -1,32 +1,45 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import {Card, Descriptions , Tabs, Table, Row, Col, Tag, Rate, Image, Breadcrumb, Collapse , List, Badge, Steps,  Form,
-    Input, InputNumber,Cascader,Select,DatePicker, Checkbox,Button,AutoComplete,Upload} from 'antd';
-import {addNewCourse, getCourse ,getCourseTypes,getTeacher, TeacherInfo} from '../../../lib/api-service';
+    Input, InputNumber,Cascader,Select,DatePicker, Checkbox,Button,AutoComplete,Upload, Space, TimePicker} from 'antd';
+import {addCourseSchedule, addNewCourse, getCourse ,getCourseTypes,getTeacher, TeacherInfo} from '../../../lib/api-service';
 import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
 import Dashboard from '../../../components/dashboard';
 import 'antd/dist/antd.css';
-import { Course } from '../../../lib/model/Course';
+import { Course, CourseSchedule } from '../../../lib/model/Course';
 import {HeartFilled} from '@ant-design/icons'
 import {v4 as uuidv4} from 'uuid';
 import { Teacher } from '../../../lib/model/Teacher';
 import { apiResolver } from 'next/dist/server/api-utils';
 import { CourseType } from '../../../lib/model/CourseType';
 import { type } from 'os';
-
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 function AddCourse () {
     const { Step } = Steps;
-    const [form] = Form.useForm();
+    const [form1] = Form.useForm();
+    const [form2] = Form.useForm();
     const { Option } = Select;
     const [teachers, setTeachers] = React.useState<Teacher[]>([]);
     const [courseTypes, setCourseTypes] = React.useState<CourseType[]>([]);
+    const [uuid, setuuid] = React.useState<string>('');
+    const [courseId, setCourseId] = React.useState<number>();
 
-    let uuid = uuidv4();
-    console.log(uuid);
-    const onFinish = (values: Course) => {
-        console.log('Received values of form: ', values);
-        addNewCourse(values);
+    
+     const onFinish1 = async (values: Course) => {
+        console.log('Received values of form : function 1 ', values);
+        values.uid = uuid;
+        const response = await addNewCourse(values);
+        console.log(response);
+        // setCourseId(response.id);
+      };
+
+      const onFinish2 = async (values: CourseSchedule) => {
+        console.log('Received values of form : function 2 ', values);
+        // values.courseId = courseId;
+        console.log(values);
+        const response = await addCourseSchedule(values);
+        console.log(response);
       };
 
 
@@ -48,11 +61,11 @@ function AddCourse () {
         let response = await getTeacher(query);
         return response.data;
         // setTeachers(response);
-        // console.log(response);
       }
 
       useEffect(() => {
         fetchTypes();
+        setuuid(uuidv4())
         // fetchTeachers();
       }, [])
 
@@ -78,9 +91,9 @@ function AddCourse () {
           
             </Steps>
             <Form
-                form={form}
+                form={form1}
                 name="register"
-                onFinish={onFinish}
+                onFinish={onFinish1}
                 scrollToFirstError
             >
             <Row>
@@ -101,7 +114,7 @@ function AddCourse () {
                 </Col>
                 <Col>
                 <Form.Item
-                    name="teacher"
+                    name="teacherId"
                     label="Teacher"
                     rules={[
                     {
@@ -222,7 +235,7 @@ function AddCourse () {
                 </Col>
                 <Col>
                 <Form.Item
-                    name="description"
+                    name="detail"
                     label="Description"
                     rules={[
                     {
@@ -255,6 +268,80 @@ function AddCourse () {
           Create Course
         </Button>
       </Form.Item>
+      </Form>
+
+      {/* part 2 */}
+      <Form name="Schedule" onFinish={onFinish2} autoComplete="off"  form={form2}>
+        <Form.List name="chapters">
+            {(chapterFields, { add, remove }) => (
+            <>
+                {
+                chapterFields.map(({ key, name, ...restField }) => (
+                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                    <Form.Item
+                    {...restField}
+                    name={[name, 'name']}
+                    
+                    >
+                    <Input placeholder="Chapter Name" />
+                    </Form.Item>
+                    <Form.Item
+                    {...restField}
+                    name={[name, 'content']}
+                    >
+                    <Input placeholder="Chapter Content" />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+                
+                ))}
+                <Form.Item>
+                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    Add Chapter
+                </Button>
+                </Form.Item>
+            </>
+            )}
+        </Form.List>
+
+        {/* <Form.List name="classes">
+        {(classFields, { add, remove }) => (
+            <>
+                {classFields.map(({ key, name, ...restField }) => (
+                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                    <Form.Item
+                    {...restField}
+                    name={[name, 'first']}
+                    
+                    >
+                    <Input placeholder="" />
+                    </Form.Item>
+                    <Form.Item
+                    {...restField}
+                    name={[name, 'last']}
+                   
+                    >
+                   
+                    <TimePicker />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                </Space>
+                ))}
+                <Form.Item>
+                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    Add Class Time
+                </Button>
+                </Form.Item>
+            </>
+            )}
+        </Form.List> */}
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+   
+
     </Form>
 
          </Dashboard>

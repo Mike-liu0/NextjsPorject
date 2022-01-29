@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_URL } from '../config/config';
 import { AES } from "crypto-js";
 import { TeacherSkill } from './model/TeacherSkill';
-import { Course } from './model/Course';
+import { Course, CourseSchedule } from './model/Course';
 
 
 export function LoginAPI(username: string, password:string, role:string){
@@ -329,7 +329,6 @@ export function getCourseTypes(){
         headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
            
         }).then(function (response: any) {
-            console.log(response.data.data);
             return response.data.data;
         })
         // .catch(function (error:any) {
@@ -344,7 +343,6 @@ export function getCourseTypes(){
 
 export function addNewCourse(course: Course){
     const axios = require('axios');
-    
     return axios.post(API_URL + 'courses',{
         name: course.name,
         uid: course.uid,
@@ -356,12 +354,13 @@ export function addNewCourse(course: Course){
         durationUnit: 1,
         cover: course.cover,
         teacherId: course.teacherId,
-        // type: course.type,
+        type: course.type,
       },{
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
         }).then(function (response: any) {
             console.log('add new Course');
-            return response;
+            console.log(response);
+            return response.data;
         }).catch(function (error:any) {
             // handle error
             console.log(error);
@@ -369,6 +368,8 @@ export function addNewCourse(course: Course){
         
         });
 }
+
+
 
 export function editCourse(course: Course){
     const axios = require('axios');
@@ -388,7 +389,7 @@ export function editCourse(course: Course){
       },{
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
         }).then(function (response: any) {
-            console.log('add new Course');
+            console.log('edit  Course');
             return response;
         }).catch(function (error:any) {
             // handle error
@@ -397,3 +398,28 @@ export function editCourse(course: Course){
         
         });
 }
+
+
+export function addCourseSchedule(schedule: CourseSchedule){
+    const axios = require('axios');
+    return axios.put(API_URL + 'courses/schedule',{
+        scheduleId:schedule.scheduleId,
+        courseId: schedule.courseId,
+        current: schedule.current,
+        status: schedule.status,
+        chapters: schedule.chapters,
+        classTime: schedule.classTime,
+
+      },{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+        }).then(function (response: any) {
+            console.log('add schedule');
+            return response;
+        }).catch(function (error:any) {
+            // handle error
+            console.log(error);
+        }).then(function () {
+        
+        });
+}
+
