@@ -1,3 +1,10 @@
+Update17: (29-1-2022)
+Q:
+
+1. The return response is null, how to solve the problem, to record the course ID.
+
+
+
 Update17: (19-1-2022)
 Q:
 
