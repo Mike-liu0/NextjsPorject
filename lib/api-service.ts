@@ -180,7 +180,7 @@ export function editStudent(id:string, name: string, email: string, country: str
 
 ////////Teacher API Related
 
-export function TeacherInfo(query:string, page:number, pagesize?:number){
+export function TeacherInfo(query:string, page?:number, pagesize?:number){
     const axios = require('axios');
     return axios.get(API_URL + 'teachers',{
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
@@ -220,12 +220,10 @@ export function getTeacher(id: string | string[]){
             console.log(response.data);
             return response.data;
         })
-        // .catch(function (error:any) {
-        //     // handle error
-        //     console.log(error);
-        // }).then(function () {
-        
-        // });
+        .catch(function (error:any) {
+            // handle error
+            console.log(error);
+        })
 }
 
 export function addNewTeacher(name: string, email: string, country: string, phone:string, skills:TeacherSkill[]){
@@ -245,8 +243,6 @@ export function addNewTeacher(name: string, email: string, country: string, phon
         }).catch(function (error:any) {
             // handle error
             console.log(error);
-        }).then(function () {
-        
         });
 }
 
@@ -364,8 +360,6 @@ export function addNewCourse(course: Course){
         }).catch(function (error:any) {
             // handle error
             console.log(error);
-        }).then(function () {
-        
         });
 }
 
@@ -414,12 +408,10 @@ export function addCourseSchedule(schedule: CourseSchedule){
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
         }).then(function (response: any) {
             console.log('add schedule');
-            return response;
+            return response.data;
         }).catch(function (error:any) {
             // handle error
             console.log(error);
-        }).then(function () {
-        
         });
 }
 

@@ -24,9 +24,9 @@ export interface Course<sales = CourseSales, courseType = CourseType, courseSche
 }
 
 
-export interface CourseSchedule<chapter = CourseChapter>{
+export interface CourseSchedule<chapter = CourseChapter, time = classTime>{
     chapters?: chapter[];
-    classTime?: string[];
+    classTime?: string[] | time[];
     current?: number;
     status?: number;
     scheduleId?: number;
@@ -38,4 +38,9 @@ export interface CourseChapter {
     id: number;
     name: string;
     order: number;
+}
+
+export interface classTime {
+    Week: String;
+    Time: String;
 }

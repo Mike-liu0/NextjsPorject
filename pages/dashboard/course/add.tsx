@@ -1,18 +1,15 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import {Card, Descriptions , Tabs, Table, Row, Col, Tag, Rate, Image, Breadcrumb, Collapse , List, Badge, Steps,  Form,
-    Input, InputNumber,Cascader,Select,DatePicker, Checkbox,Button,AutoComplete,Upload, Space, TimePicker} from 'antd';
+    Input, InputNumber,Cascader,Select,DatePicker, Checkbox,Button,AutoComplete,Upload, Space, TimePicker, Result} from 'antd';
 import {addCourseSchedule, addNewCourse, getCourse ,getCourseTypes,getTeacher, TeacherInfo} from '../../../lib/api-service';
 import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
 import Dashboard from '../../../components/dashboard';
 import 'antd/dist/antd.css';
 import { Course, CourseSchedule } from '../../../lib/model/Course';
-import {HeartFilled} from '@ant-design/icons'
 import {v4 as uuidv4} from 'uuid';
 import { Teacher } from '../../../lib/model/Teacher';
-import { apiResolver } from 'next/dist/server/api-utils';
 import { CourseType } from '../../../lib/model/CourseType';
-import { type } from 'os';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 
 function AddCourse () {
@@ -24,24 +21,40 @@ function AddCourse () {
     const [courseTypes, setCourseTypes] = React.useState<CourseType[]>([]);
     const [uuid, setuuid] = React.useState<string>('');
     const [courseId, setCourseId] = React.useState<number>();
-
+    const format = 'HH:mm:ss';
+    const [isStep1, setIsStep1] =  React.useState<boolean>(false);
+    const [isStep2, setIsStep2] =  React.useState<boolean>(true);
+    const [isStep3, setIsStep3] =  React.useState<boolean>(true);
     
      const onFinish1 = async (values: Course) => {
         console.log('Received values of form : function 1 ', values);
         values.uid = uuid;
         const response = await addNewCourse(values);
         console.log(response);
-        // setCourseId(response.id);
+        if(response.msg == "success"){
+            setCourseId(response.data.id);
+            setIsStep1(true);
+            setIsStep2(false);
+        }
+       
       };
 
       const onFinish2 = async (values: CourseSchedule) => {
-        console.log('Received values of form : function 2 ', values);
-        // values.courseId = courseId;
+        console.log('Received values of form : function 2 ',  );
+        values.courseId = courseId;
+        // let times = values.classTime?.forEach(e => {return e.Week +" "+ e.Time.toString().substr(16,8)});
+        // console.log(times);
+        // values.classTime = times;
+      
         console.log(values);
         const response = await addCourseSchedule(values);
         console.log(response);
-      };
+        if(response.msg == "success"){
 
+            setIsStep2(true);
+            setIsStep3(false);
+        }
+      };
 
 
      const normFile = (e: any) => {
@@ -57,16 +70,15 @@ function AddCourse () {
         setCourseTypes(response);
       }
 
-      async function fetchTeachers (query:string){
-        let response = await getTeacher(query);
-        return response.data;
-        // setTeachers(response);
+      async function fetchTeachers (){
+        let response = await TeacherInfo(" ");
+        setTeachers(response.data);
       }
 
       useEffect(() => {
         fetchTypes();
         setuuid(uuidv4())
-        // fetchTeachers();
+        fetchTeachers();
       }, [])
 
 
@@ -95,6 +107,7 @@ function AddCourse () {
                 name="register"
                 onFinish={onFinish1}
                 scrollToFirstError
+                hidden = {isStep1}
             >
             <Row>
                 <Col>
@@ -123,27 +136,19 @@ function AddCourse () {
                     },
                     ]}
                 >
-                    {/* <Select
+                    <Select
                         placeholder="Select teacher"
-                        showSearch
                         filterOption={false}
-                        onSearch={(query: string) =>{
-                            let teachersData = fetchTeachers(query);
-                            console.log(teachersData);
-                            if(! teachersData){
-                                setTeachers(teachersData);
-                            }
-                        }}
                     >
                         {
-                            teachers.map(({id, name})=>{
-                                <Select.Option key={id} value={id}>
+                            teachers.map(({id, name})=>(
+                                <Option key={id} value={id}>
                                     {name}
-                                </Select.Option>
-                            })
+                                </Option>
+                            ))
                         }
-                    </Select> */}
-                    <Input />
+                    </Select> 
+                    {/* <Input /> */}
                 </Form.Item>
                 
                 </Col>
@@ -271,7 +276,7 @@ function AddCourse () {
       </Form>
 
       {/* part 2 */}
-      <Form name="Schedule" onFinish={onFinish2} autoComplete="off"  form={form2}>
+      <Form name="Schedule" onFinish={onFinish2} autoComplete="off"  form={form2}  hidden = {isStep2}>
         <Form.List name="chapters">
             {(chapterFields, { add, remove }) => (
             <>
@@ -304,25 +309,31 @@ function AddCourse () {
             )}
         </Form.List>
 
-        {/* <Form.List name="classes">
+        <Form.List name="classTime">
         {(classFields, { add, remove }) => (
             <>
                 {classFields.map(({ key, name, ...restField }) => (
                 <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
                     <Form.Item
                     {...restField}
-                    name={[name, 'first']}
-                    
+                    name={[name, 'Week']}
                     >
-                    <Input placeholder="" />
+                        <Select placeholder="Day of the Week" >
+                            <Option key={1} value={"Monday"}>Monday</Option>
+                            <Option key={2} value={"Tuesday"}>Tuesday</Option>
+                            <Option key={3} value={"Wednesday"}>Wednesday</Option>
+                            <Option key={4} value={"Thursday"}>Thursday</Option>
+                            <Option key={5} value={"Friday"}>Friday</Option>
+                            <Option key={6} value={"Saturday"}>Saturday</Option>
+                            <Option key={7} value={"Sunday"}>Sunday</Option>
+                        </Select>
+                   
                     </Form.Item>
                     <Form.Item
                     {...restField}
-                    name={[name, 'last']}
-                   
+                    name={[name, 'Time']}
                     >
-                   
-                    <TimePicker />
+                        <TimePicker format={format}/>
                     </Form.Item>
                     <MinusCircleOutlined onClick={() => remove(name)} />
                 </Space>
@@ -334,7 +345,7 @@ function AddCourse () {
                 </Form.Item>
             </>
             )}
-        </Form.List> */}
+        </Form.List> 
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Submit
@@ -343,6 +354,23 @@ function AddCourse () {
    
 
     </Form>
+
+    <div hidden={isStep3}>
+        <Result
+            status="success"
+            
+            title="Successfully Add New Course!"
+            // subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+            extra={[
+            <Button type="primary" key="console">
+                Go Console
+            </Button>,
+            <Button key="buy">Add Again</Button>,
+            ]}
+        />
+
+    </div>
+    
 
          </Dashboard>
 
