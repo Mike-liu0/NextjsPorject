@@ -1,3 +1,12 @@
+Update19: (5-2-2022)
+Q:
+
+1. the uuid is not shown
+2. the onsearch options are not shown, how to pick the correct course name/id
+
+
+
+
 Update17: (29-1-2022)
 Q:
 
