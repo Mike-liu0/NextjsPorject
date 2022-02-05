@@ -6,12 +6,13 @@ import {addCourseSchedule, addNewCourse, getCourse ,getCourseTypes,getTeacher, T
 import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
 import Dashboard from '../../../components/dashboard';
 import 'antd/dist/antd.css';
-import { Course, CourseSchedule } from '../../../lib/model/Course';
+import { classTime, Course, CourseSchedule, CourseScheduleDto } from '../../../lib/model/Course';
 import {v4 as uuidv4} from 'uuid';
 import { Teacher } from '../../../lib/model/Teacher';
 import { CourseType } from '../../../lib/model/CourseType';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-
+import Link from "next/link";
+import Router from "next/router";
 function AddCourse () {
     const { Step } = Steps;
     const [form1] = Form.useForm();
@@ -21,10 +22,13 @@ function AddCourse () {
     const [courseTypes, setCourseTypes] = React.useState<CourseType[]>([]);
     const [uuid, setuuid] = React.useState<string>('');
     const [courseId, setCourseId] = React.useState<number>();
+    const [scheduleId, setScheduleId] = React.useState<number>();
     const format = 'HH:mm:ss';
     const [isStep1, setIsStep1] =  React.useState<boolean>(false);
     const [isStep2, setIsStep2] =  React.useState<boolean>(true);
     const [isStep3, setIsStep3] =  React.useState<boolean>(true);
+    const [currentStep, setCurrentStep] =  React.useState<number>(0);
+
     
      const onFinish1 = async (values: Course) => {
         console.log('Received values of form : function 1 ', values);
@@ -33,18 +37,21 @@ function AddCourse () {
         console.log(response);
         if(response.msg == "success"){
             setCourseId(response.data.id);
+            setScheduleId(response.data.scheduleId);
             setIsStep1(true);
             setIsStep2(false);
+            setCurrentStep(1);
         }
        
       };
 
-      const onFinish2 = async (values: CourseSchedule) => {
+      const onFinish2 = async (values: CourseScheduleDto) => {
         console.log('Received values of form : function 2 ',  );
         values.courseId = courseId;
-        // let times = values.classTime?.forEach(e => {return e.Week +" "+ e.Time.toString().substr(16,8)});
+        let times = values.InputClassTime?.map((value) => {return value.Week +" "+ value.Time.format(format)});
         // console.log(times);
-        // values.classTime = times;
+        values.classTime = times;
+        values .scheduleId = scheduleId;
       
         console.log(values);
         const response = await addCourseSchedule(values);
@@ -53,6 +60,7 @@ function AddCourse () {
 
             setIsStep2(true);
             setIsStep3(false);
+            setCurrentStep(2);
         }
       };
 
@@ -75,11 +83,17 @@ function AddCourse () {
         setTeachers(response.data);
       }
 
+      async function fetchUUID (){
+        let uuid = uuidv4();
+        setuuid(uuid);
+      }
+
       useEffect(() => {
         fetchTypes();
-        setuuid(uuidv4())
+        fetchUUID();
         fetchTeachers();
-      }, [])
+        console.log("loading page" + uuid);
+      }, [uuid])
 
 
     return (
@@ -94,8 +108,9 @@ function AddCourse () {
             </Breadcrumb>
             <Steps
                 type="navigation"
-                // current={current}
+                current={currentStep}
                 className="site-navigation-steps"
+                style={{"padding": 10}}
                 >
                 <Step  title="Course Detail" />
                 <Step  title="Course Schedule" />
@@ -110,7 +125,7 @@ function AddCourse () {
                 hidden = {isStep1}
             >
             <Row>
-                <Col>
+                <Col span={6}>
                 <Form.Item
                     name="name"
                     label="Course Name"
@@ -125,7 +140,7 @@ function AddCourse () {
                 </Form.Item>
                 
                 </Col>
-                <Col>
+                <Col span={6}>
                 <Form.Item
                     name="teacherId"
                     label="Teacher"
@@ -152,7 +167,7 @@ function AddCourse () {
                 </Form.Item>
                 
                 </Col>
-                <Col span={4}>
+                <Col span={6}>
                 <Form.Item
                     name="type"
                     label="Type"
@@ -176,11 +191,10 @@ function AddCourse () {
                 </Form.Item>
                 
                 </Col>
-                <Col>
+                <Col  span={6}>
                 <Form.Item
                     name="uid"
                     label="Course Code"
-                    
                 >
                     <Input defaultValue={uuid} value={uuid} disabled/>
                 </Form.Item>
@@ -188,7 +202,7 @@ function AddCourse () {
                 </Col>
             </Row>
             <Row>
-                <Col>
+                <Col span={6}>
                 <Form.Item
                     name="startTime"
                     label="Start Date"
@@ -238,7 +252,7 @@ function AddCourse () {
                     <Input />
                 </Form.Item>
                 </Col>
-                <Col>
+                <Col span={8}>
                 <Form.Item
                     name="detail"
                     label="Description"
@@ -249,22 +263,22 @@ function AddCourse () {
                     },
                     ]}
                 >
-                    <Input.TextArea />
+                    <Input.TextArea rows={9} />
                 </Form.Item>
                 
                 </Col>
-                <Col>
-                <Form.Item  label="Cover">
-                    <Form.Item valuePropName="fileList" getValueFromEvent={normFile} noStyle>
-                    <Upload.Dragger name="files" action="/upload.do">
-                        <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                        <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-                    </Upload.Dragger>
+                <Col span={8}>
+                    <Form.Item  label="Cover">
+                        <Form.Item valuePropName="fileList" getValueFromEvent={normFile} noStyle>
+                        <Upload.Dragger name="files" action="/upload.do">
+                            <p className="ant-upload-drag-icon">
+                            <InboxOutlined />
+                            </p>
+                            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                            <p className="ant-upload-hint">Support for a single or bulk upload.</p>
+                        </Upload.Dragger>
+                        </Form.Item>
                     </Form.Item>
-                </Form.Item>
                 
                 </Col>
             </Row>
@@ -276,7 +290,12 @@ function AddCourse () {
       </Form>
 
       {/* part 2 */}
+     
+
+     
       <Form name="Schedule" onFinish={onFinish2} autoComplete="off"  form={form2}  hidden = {isStep2}>
+      <Row> 
+          <Col span={12}>
         <Form.List name="chapters">
             {(chapterFields, { add, remove }) => (
             <>
@@ -308,12 +327,13 @@ function AddCourse () {
             </>
             )}
         </Form.List>
-
+        </Col>
+        <Col span={12}>
         <Form.List name="classTime">
         {(classFields, { add, remove }) => (
             <>
                 {classFields.map(({ key, name, ...restField }) => (
-                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                <Space key={key} style={{ display: 'flex', marginBottom: 8}} align="baseline">
                     <Form.Item
                     {...restField}
                     name={[name, 'Week']}
@@ -346,6 +366,8 @@ function AddCourse () {
             </>
             )}
         </Form.List> 
+        </Col>
+    </Row>
       <Form.Item>
         <Button type="primary" htmlType="submit">
           Submit
@@ -363,9 +385,11 @@ function AddCourse () {
             // subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
             extra={[
             <Button type="primary" key="console">
-                Go Console
+               <Link href="/dashboard/course">Go Console</Link> 
             </Button>,
-            <Button key="buy">Add Again</Button>,
+            <Button key="buy" onClick={() => Router.reload()}>
+               Add Again
+            </Button>,
             ]}
         />
 

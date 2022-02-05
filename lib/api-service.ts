@@ -2,7 +2,7 @@ import axios from 'axios';
 import { API_URL } from '../config/config';
 import { AES } from "crypto-js";
 import { TeacherSkill } from './model/TeacherSkill';
-import { Course, CourseSchedule } from './model/Course';
+import { Course, CourseSchedule, CourseScheduleDto } from './model/Course';
 
 
 export function LoginAPI(username: string, password:string, role:string){
@@ -283,13 +283,16 @@ export function deleteTeacher(id: string){
 // Courses API
 
 
-export function CourseInfo( page:number, pagesize?:number){
+export function CourseInfo( page?:number, pagesize?:number, name?:string, type?:string, uid?:string){
     const axios = require('axios');
     return axios.get(API_URL + 'courses',{
             headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
             params: {
                 page: page,
                 limit: pagesize,
+                name:name,
+                type:type,
+                uid:uid,
               }
         }).then(function (response: any) {
             var listValue = (response.data.data.courses);
@@ -297,8 +300,21 @@ export function CourseInfo( page:number, pagesize?:number){
             return {data: listValue, total:totalValue};
         })
      
-    
-    
+}
+
+export function getCourseByName( name?:string){
+    const axios = require('axios');
+    return axios.get(API_URL + 'courses',{
+            headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+            params: {
+                name:name,
+            }
+        }).then(function (response: any) {
+            var listValue = (response.data.data.courses);
+            var totalValue = (response.data.data.total);
+            return {data: listValue, total:totalValue};
+        })
+     
 }
 
 export function getCourse(id: string | string[]){
@@ -394,7 +410,7 @@ export function editCourse(course: Course){
 }
 
 
-export function addCourseSchedule(schedule: CourseSchedule){
+export function addCourseSchedule(schedule: CourseScheduleDto){
     const axios = require('axios');
     return axios.put(API_URL + 'courses/schedule',{
         scheduleId:schedule.scheduleId,
