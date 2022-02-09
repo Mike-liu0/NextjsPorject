@@ -312,7 +312,7 @@ export function getCourseByName( name?:string){
         }).then(function (response: any) {
             var listValue = (response.data.data.courses);
             var totalValue = (response.data.data.total);
-            return {data: listValue, total:totalValue};
+            return listValue;
         })
      
 }
@@ -325,7 +325,6 @@ export function getCourse(id: string | string[]){
                 id:id,
                 }
         }).then(function (response: any) {
-            console.log(response.data);
             return response.data;
         })
         // .catch(function (error:any) {
@@ -335,6 +334,19 @@ export function getCourse(id: string | string[]){
         
         // });
 }
+
+export function getCourseSchedule(id: string){
+    const axios = require('axios');
+    return axios.get(API_URL + 'courses/schedule',{
+        headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+            params: {
+                courseId:id,
+                }
+        }).then(function (response: any) {
+            return response.data;
+        })
+}
+
 export function getCourseTypes(){
     const axios = require('axios');
     return axios.get(API_URL + 'courses/type',{
@@ -383,10 +395,9 @@ export function addNewCourse(course: Course){
 
 export function editCourse(course: Course){
     const axios = require('axios');
-    
-    return axios.post(API_URL + 'courses',{
+    return axios.put(API_URL + 'courses',{
+        id: course.id,
         name: course.name,
-        uid: course.uid,
         detail: course.detail,
         startTime: course.startTime,
         price: course.price,
@@ -404,9 +415,7 @@ export function editCourse(course: Course){
         }).catch(function (error:any) {
             // handle error
             console.log(error);
-        }).then(function () {
-        
-        });
+        })
 }
 
 

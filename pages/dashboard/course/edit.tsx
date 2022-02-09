@@ -3,15 +3,19 @@ import React, { useEffect, useState } from 'react';
 import {Card, Descriptions , Tabs, Table, Row, Col, Tag, Rate, Image, Breadcrumb, Collapse , List, Badge, Steps,  Form,
     Input, InputNumber,Cascader,Select,DatePicker, Checkbox,Button,AutoComplete,Upload, Space, TimePicker, Result} from 'antd';
 
-import {addCourseSchedule, addNewCourse, CourseInfo, getCourse ,getCourseByName,getCourseTypes,getTeacher, TeacherInfo} from '../../../lib/api-service';
+import {addCourseSchedule, addNewCourse, CourseInfo, editCourse, getCourse ,getCourseByName,getCourseSchedule,getCourseTypes,getTeacher, TeacherInfo} from '../../../lib/api-service';
 import Dashboard from '../../../components/dashboard';
 import 'antd/dist/antd.css';
-import { Course } from '../../../lib/model/Course';
+import { Course, CourseSchedule, CourseScheduleDto } from '../../../lib/model/Course';
 import {HeartFilled, InboxOutlined} from '@ant-design/icons'
 import { Teacher } from '../../../lib/model/Teacher';
 import { CourseType } from '../../../lib/model/CourseType';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-
+import moment from "moment";
+interface optionWithLable {
+    label: string,
+    value: Course
+}
 
 function EditCourse () {
     const { Search } = Input;
@@ -22,44 +26,80 @@ function EditCourse () {
     const [teachers, setTeachers] = React.useState<Teacher[]>([]);
     const [courseTypes, setCourseTypes] = React.useState<CourseType[]>([]);
     const [uuid, setuuid] = React.useState<string>('');
-    const [courseId, setCourseId] = React.useState<number>();
+    const [courseId, setCourseId] = React.useState<number>(0);
     const [scheduleId, setScheduleId] = React.useState<number>();
     const format = 'HH:mm:ss';
+    const [courses, setCourses] = React.useState<Course[]>([]); 
+    const [searchString, setSeachString] = React.useState<string>(""); 
+    const [courseSelected, setCourseSelected] = React.useState<Course>(); 
+    const [courseSelectedSchedule, setCourseSelectedSchedule] = React.useState<CourseSchedule>(); 
+    const [options, setOptions] = useState<optionWithLable[]>([]);
 
+    const onSelect = (value: number, option: any) => {
+        const courseSelected = courses.find(c => c.id === value);
+        setCourseSelected(courseSelected);
+        setCourseId(courseSelected?.id);
+        setScheduleId(courseSelected?.schedule?.courseId);
+        fetchCourseSchedule(String(courseSelected?.id));
+        form1.setFieldsValue({
+            ...courseSelected,
+            type: courseSelected?.type?.map(t => t.name),
+            startTime: moment(courseSelected?.startTime)
+        })
 
-    const [options, setOptions] = useState<Course[]>([]);
-    const [optionNames, setOptionNames] = useState<String[]>([]);
+        form2.setFieldsValue({
+            ...courseSelectedSchedule,
+            chapters: courseSelectedSchedule?.chapters,
+            classTime: courseSelectedSchedule?.classTime?.map(t => ({
+                Week: t.split(" ")[0],
+                Time: moment(t.split(" ")[1], format),
+            }
+           ))
 
-    const onSelect = (data: string) => {
-        console.log('onSelect', data);
+        })
     };
-
-
 
     const onFinish1 = async (values: Course) => {
         console.log('Received values of form : function 1 ', values);
-
-      };
-    const onFinish2 = async (values: Course) => {
+        values.id = courseId;
+        const response = await editCourse(values);
+        console.log(response);
+        fetchCourse(searchString);   
+        // const updatedCourse = getCourse(String(courseId));
+        // console.log(updatedCourse);
+        // setCourseSelected(updatedCourse);
+       
+    };
+    const onFinish2 = async (values: CourseScheduleDto) => {
         console.log('Received values of form : function 2 ', values);
-
+        values.courseId = courseId;
+        let times = values.InputClassTime?.map((value) => {return value.Week +" "+ value.Time.format(format)});
+        values.classTime = times;
+        values.scheduleId = scheduleId;
+        const response = await addCourseSchedule(values);
+        console.log(response);
+        fetchCourse(searchString);
+        // setCourseSelected(getCourse(String(courseId)));
+        
       };
 
-    function onSearch (value:string) {
-        console.log("search : " + value);
-        fetchCourse (value);
+    function onSearch (value:string) { 
+        setSeachString(value);
+        fetchCourse(value);
     };
 
-
-
     async function fetchCourse (name: string){
-        let {data, total} = await getCourseByName(name);
-        // console.log(data); 
-        // console.log(total); 
-        setOptions(data);
-        console.log(options);
-        // setOptionNames(data.map(e => e.name))
-        // console.log(optionNames);
+        let data = await getCourseByName(name);
+        setCourses(data);
+        setOptions(data.map((c:Course) => ({
+            label: c.name,
+            value: c.id
+        })));
+      }
+
+      async function fetchCourseSchedule (id: string){
+        let data = await getCourseSchedule(id);
+        setCourseSelectedSchedule(data.data);
       }
 
       async function fetchTypes (){
@@ -84,8 +124,7 @@ function EditCourse () {
       useEffect(() => {
         fetchTypes();
         fetchTeachers();
-        console.log("loading page" + uuid);
-      }, [uuid])
+      }, [])
 
     return (
     <>
@@ -98,7 +137,7 @@ function EditCourse () {
                 <Breadcrumb.Item>Edit Course</Breadcrumb.Item>
             </Breadcrumb>
 
-            <Input.Group compact>
+            {/* <Input.Group compact>
 
                 <Select defaultValue="Name">
                     <Option value="Name">Name</Option>
@@ -106,10 +145,10 @@ function EditCourse () {
                 </Select>
                 <Search  placeholder="input search text" allowClear onSearch={onSearch} style={{ width: 200 }} />
                 
-            </Input.Group>
+            </Input.Group> */}
 
             <AutoComplete
-                options={optionNames}
+                options={options}
                 style={{ width: 200 }}
                 onSelect={onSelect}
                 onSearch={onSearch}

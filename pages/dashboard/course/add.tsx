@@ -20,7 +20,8 @@ function AddCourse () {
     const { Option } = Select;
     const [teachers, setTeachers] = React.useState<Teacher[]>([]);
     const [courseTypes, setCourseTypes] = React.useState<CourseType[]>([]);
-    const [uuid, setuuid] = React.useState<string>('');
+    // const [uuid, setuuid] = React.useState<string>('');
+    const uuid = uuidv4();
     const [courseId, setCourseId] = React.useState<number>();
     const [scheduleId, setScheduleId] = React.useState<number>();
     const format = 'HH:mm:ss';
@@ -31,7 +32,6 @@ function AddCourse () {
 
     
      const onFinish1 = async (values: Course) => {
-        console.log('Received values of form : function 1 ', values);
         values.uid = uuid;
         const response = await addNewCourse(values);
         console.log(response);
@@ -46,13 +46,10 @@ function AddCourse () {
       };
 
       const onFinish2 = async (values: CourseScheduleDto) => {
-        console.log('Received values of form : function 2 ',  );
         values.courseId = courseId;
         let times = values.InputClassTime?.map((value) => {return value.Week +" "+ value.Time.format(format)});
-        // console.log(times);
         values.classTime = times;
-        values .scheduleId = scheduleId;
-      
+        values.scheduleId = scheduleId;
         console.log(values);
         const response = await addCourseSchedule(values);
         console.log(response);
@@ -83,17 +80,16 @@ function AddCourse () {
         setTeachers(response.data);
       }
 
-      async function fetchUUID (){
-        let uuid = uuidv4();
-        setuuid(uuid);
-      }
+    //   async function fetchUUID (){
+    //     let uuid = uuidv4();
+    //     setuuid(uuid);
+    //   }
 
       useEffect(() => {
         fetchTypes();
-        fetchUUID();
+        // fetchUUID();
         fetchTeachers();
-        console.log("loading page" + uuid);
-      }, [uuid])
+      }, [])
 
 
     return (
@@ -123,6 +119,9 @@ function AddCourse () {
                 onFinish={onFinish1}
                 scrollToFirstError
                 hidden = {isStep1}
+                initialValues = {{
+                    uid: uuid
+                }}
             >
             <Row>
                 <Col span={6}>
@@ -196,7 +195,7 @@ function AddCourse () {
                     name="uid"
                     label="Course Code"
                 >
-                    <Input defaultValue={uuid} value={uuid} disabled/>
+                    <Input disabled/>
                 </Form.Item>
                 
                 </Col>
