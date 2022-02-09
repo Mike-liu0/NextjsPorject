@@ -1,3 +1,11 @@
+Update20: (9-2-2022)
+Q:
+
+1. some error in edit page, such as options in Autocomplete
+2. edit schedule part has a bug, the updated data is not displayed immediately. It may show mistake data after second click.
+
+
+
 Update19: (5-2-2022)
 Q:
 
