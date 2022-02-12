@@ -20,6 +20,7 @@ export interface Course<sales = CourseSales, courseType = CourseType, courseSche
     type?:courseType[];
     schedule?: courseSchedule;
     teacherId: number;
+    scheduleId: number;
 
 }
 
@@ -44,8 +45,10 @@ export interface CourseChapter {
 
 export interface CourseScheduleDto<chapter = CourseChapter, time = classTime>{
     chapters?: chapter[];
-    classTime?:  string[] ;
-    InputClassTime?:  time[] ;
+    classTime?:  any[] ;
+    Week?: string;
+    Time?: string;
+    InputClassTime?:  any[] ;
     current?: number;
     status?: number;
     scheduleId?: number;

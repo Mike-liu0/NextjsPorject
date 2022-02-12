@@ -343,7 +343,7 @@ export function getCourseSchedule(id: string){
                 courseId:id,
                 }
         }).then(function (response: any) {
-            return response.data;
+            return response.data.data;
         })
 }
 

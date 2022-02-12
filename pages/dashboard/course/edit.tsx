@@ -26,7 +26,7 @@ function EditCourse () {
     const [teachers, setTeachers] = React.useState<Teacher[]>([]);
     const [courseTypes, setCourseTypes] = React.useState<CourseType[]>([]);
     const [uuid, setuuid] = React.useState<string>('');
-    const [courseId, setCourseId] = React.useState<number>(0);
+    const [courseId, setCourseId] = React.useState<number >();
     const [scheduleId, setScheduleId] = React.useState<number>();
     const format = 'HH:mm:ss';
     const [courses, setCourses] = React.useState<Course[]>([]); 
@@ -37,9 +37,10 @@ function EditCourse () {
 
     const onSelect = (value: number, option: any) => {
         const courseSelected = courses.find(c => c.id === value);
+        console.log(courseSelected);
         setCourseSelected(courseSelected);
         setCourseId(courseSelected?.id);
-        setScheduleId(courseSelected?.schedule?.courseId);
+        setScheduleId(courseSelected?.scheduleId);
         fetchCourseSchedule(String(courseSelected?.id));
         form1.setFieldsValue({
             ...courseSelected,
@@ -47,21 +48,12 @@ function EditCourse () {
             startTime: moment(courseSelected?.startTime)
         })
 
-        form2.setFieldsValue({
-            ...courseSelectedSchedule,
-            chapters: courseSelectedSchedule?.chapters,
-            classTime: courseSelectedSchedule?.classTime?.map(t => ({
-                Week: t.split(" ")[0],
-                Time: moment(t.split(" ")[1], format),
-            }
-           ))
-
-        })
+      
     };
 
     const onFinish1 = async (values: Course) => {
         console.log('Received values of form : function 1 ', values);
-        values.id = courseId;
+        values.id = courseId ? courseId : 0;
         const response = await editCourse(values);
         console.log(response);
         fetchCourse(searchString);   
@@ -72,14 +64,16 @@ function EditCourse () {
     };
     const onFinish2 = async (values: CourseScheduleDto) => {
         console.log('Received values of form : function 2 ', values);
+        console.log(scheduleId);
         values.courseId = courseId;
-        let times = values.InputClassTime?.map((value) => {return value.Week +" "+ value.Time.format(format)});
-        values.classTime = times;
         values.scheduleId = scheduleId;
+        let times = values.classTime?.map((value) => {return value.Week +" "+ value.Time.format(format)});
+        values.classTime = times;
         const response = await addCourseSchedule(values);
         console.log(response);
         fetchCourse(searchString);
         // setCourseSelected(getCourse(String(courseId)));
+        fetchCourseSchedule(String(courseSelected?.id));
         
       };
 
@@ -99,7 +93,19 @@ function EditCourse () {
 
       async function fetchCourseSchedule (id: string){
         let data = await getCourseSchedule(id);
+        console.log(data);
         setCourseSelectedSchedule(data.data);
+
+        form2.setFieldsValue({
+            ...data,
+            chapters: data?.chapters,
+            classTime: data?.classTime?.map((t: string) => ({
+                Week: t.split(" ")[0],
+                Time: moment(t.split(" ")[1], format),
+            }
+           ))
+
+        })
       }
 
       async function fetchTypes (){
@@ -390,7 +396,7 @@ function EditCourse () {
                                     {...restField}
                                     name={[name, 'Time']}
                                     >
-                                        <TimePicker format={format}/>
+                                        <TimePicker />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>
