@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import {Card, Descriptions , Tabs, Table, Row, Col, Tag, Rate, Image, Breadcrumb, Collapse , List, Badge, Steps,  Form,
+import {Card, Descriptions , Tabs, Table, Row, Col, Tag, Rate, Image, Breadcrumb, Layout, List, Badge, Steps,  Form,
     Input, InputNumber,Cascader,Select,DatePicker, Checkbox,Button,AutoComplete,Upload, Space, TimePicker, Result} from 'antd';
 
 import {addCourseSchedule, addNewCourse, CourseInfo, editCourse, getCourse ,getCourseByName,getCourseSchedule,getCourseTypes,getTeacher, TeacherInfo} from '../../../lib/api-service';
@@ -19,6 +19,7 @@ interface optionWithLable {
 
 function EditCourse () {
     const { Search } = Input;
+    const { Header, Content, Footer, Sider } = Layout;
     const [form1] = Form.useForm();
     const [form2] = Form.useForm();
     const { Option } = Select;
@@ -62,6 +63,7 @@ function EditCourse () {
         // setCourseSelected(updatedCourse);
        
     };
+
     const onFinish2 = async (values: CourseScheduleDto) => {
         console.log('Received values of form : function 2 ', values);
         console.log(scheduleId);
@@ -152,7 +154,7 @@ function EditCourse () {
                 <Search  placeholder="input search text" allowClear onSearch={onSearch} style={{ width: 200 }} />
                 
             </Input.Group> */}
-
+            <Content style={{ padding: '15px', backgroundColor: "white" }}>
             <AutoComplete
                 options={options}
                 style={{ width: 200 }}
@@ -160,271 +162,276 @@ function EditCourse () {
                 onSearch={onSearch}
                 placeholder="input here"
             />
-            <Tabs  type="card">
-                <TabPane tab="Course Detail" key="1">
-                <Form
-                form={form1}
-                name="register"
-                onFinish={onFinish1}
-                scrollToFirstError
-                >   
-                    <Row>
-                        <Col span={6}>
-                        <Form.Item
-                            name="name"
-                            label="Course Name"
-                            rules={[
-                            {
-                                required: true,
-                                message: 'Please input name',
-                            },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        
-                        </Col>
-                        <Col span={6}>
-                        <Form.Item
-                            name="teacherId"
-                            label="Teacher"
-                            rules={[
-                            {
-                                required: true,
-                                message: 'Please input name',
-                            },
-                            ]}
-                        >
-                            <Select
-                                placeholder="Select teacher"
-                                filterOption={false}
-                            >
+
+         
+                <Tabs  type="card">
+                    <TabPane tab="Course Detail" key="1">
+                    <Form
+                    form={form1}
+                    name="register"
+                    onFinish={onFinish1}
+                    scrollToFirstError
+                    >   
+                        <Row>
+                            <Col span={6}>
+                            <Form.Item
+                                name="name"
+                                label="Course Name"
+                                rules={[
                                 {
-                                    teachers.map(({id, name})=>(
-                                        <Option key={id} value={id}>
-                                            {name}
-                                        </Option>
-                                    ))
-                                }
-                            </Select> 
-                            {/* <Input /> */}
-                        </Form.Item>
-                        
-                        </Col>
-                        <Col span={6}>
-                        <Form.Item
-                            name="type"
-                            label="Type"
-                            rules={[
-                            {
-                                required: true
-                            },
-                            ]}
-                        >
-                            <Select
-                                placeholder="Select Type"
-                                mode='multiple'
+                                    required: true,
+                                    message: 'Please input name',
+                                },
+                                ]}
                             >
-                                {    
-                                    courseTypes.map((type)=> (
-                                        <Option key={type.id} value={type.id}> {type.name} </Option>
-                                    ))
-                                } 
-                            
-                            </Select>
-                        </Form.Item>
-                        
-                        </Col>
-                        <Col  span={6}>
-                        <Form.Item
-                            name="uid"
-                            label="Course Code"
-                        >
-                            <Input defaultValue={uuid} value={uuid} disabled/>
-                        </Form.Item>
-                        
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span={6}>
-                        <Form.Item
-                            name="startTime"
-                            label="Start Date"
-                            rules={[
-                            {
-                                required: true,
-                                
-                            },
-                            ]}
-                        >
-                        <DatePicker />
-                        </Form.Item>
-                        <Form.Item
-                            name="price"
-                            label="Price"
-                            rules={[
-                            {
-                                required: true,
-                            
-                            },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name="maxStudents"
-                            label="Student Limit"
-                            rules={[
-                            {
-                                required: true,
-                            
-                            },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name="duration"
-                            label="Duration"
-                            rules={[
-                            {
-                                required: true,
-                            
-                            },
-                            ]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                        <Form.Item
-                            name="detail"
-                            label="Description"
-                            rules={[
-                            {
-                                required: true,
-                            
-                            },
-                            ]}
-                        >
-                            <Input.TextArea rows={9} />
-                        </Form.Item>
-                        
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item  label="Cover">
-                                <Form.Item valuePropName="fileList" getValueFromEvent={normFile} noStyle>
-                                <Upload.Dragger name="files" action="/upload.do">
-                                    <p className="ant-upload-drag-icon">
-                                    <InboxOutlined />
-                                    </p>
-                                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                    <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-                                </Upload.Dragger>
-                                </Form.Item>
+                                <Input />
                             </Form.Item>
-                        
-                        </Col>
-                    </Row>
-                 <Form.Item>
-                <Button type="primary" htmlType="submit">
-                     Update Course
-                </Button>
-            </Form.Item>
-            </Form>
-                        
-                </TabPane>
-                <TabPane tab="Course Schedule" key="2">
-
-                <Form name="Schedule" onFinish={onFinish2} autoComplete="off"  form={form2}  >
-                    <Row> 
-                        <Col span={12}>
-                        <Form.List name="chapters">
-                            {(chapterFields, { add, remove }) => (
-                            <>
+                            
+                            </Col>
+                            <Col span={6}>
+                            <Form.Item
+                                name="teacherId"
+                                label="Teacher"
+                                rules={[
                                 {
-                                chapterFields.map(({ key, name, ...restField }) => (
-                                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-                                    <Form.Item
-                                    {...restField}
-                                    name={[name, 'name']}
+                                    required: true,
+                                    message: 'Please input name',
+                                },
+                                ]}
+                            >
+                                <Select
+                                    placeholder="Select teacher"
+                                    filterOption={false}
+                                >
+                                    {
+                                        teachers.map(({id, name})=>(
+                                            <Option key={id} value={id}>
+                                                {name}
+                                            </Option>
+                                        ))
+                                    }
+                                </Select> 
+                                {/* <Input /> */}
+                            </Form.Item>
+                            
+                            </Col>
+                            <Col span={6}>
+                            <Form.Item
+                                name="type"
+                                label="Type"
+                                rules={[
+                                {
+                                    required: true
+                                },
+                                ]}
+                            >
+                                <Select
+                                    placeholder="Select Type"
+                                    mode='multiple'
+                                >
+                                    {    
+                                        courseTypes.map((type)=> (
+                                            <Option key={type.id} value={type.id}> {type.name} </Option>
+                                        ))
+                                    } 
+                                
+                                </Select>
+                            </Form.Item>
+                            
+                            </Col>
+                            <Col  span={6}>
+                            <Form.Item
+                                name="uid"
+                                label="Course Code"
+                            >
+                                <Input defaultValue={uuid} value={uuid} disabled/>
+                            </Form.Item>
+                            
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col span={6}>
+                            <Form.Item
+                                name="startTime"
+                                label="Start Date"
+                                rules={[
+                                {
+                                    required: true,
                                     
-                                    >
-                                    <Input placeholder="Chapter Name" />
-                                    </Form.Item>
-                                    <Form.Item
-                                    {...restField}
-                                    name={[name, 'content']}
-                                    >
-                                    <Input placeholder="Chapter Content" />
-                                    </Form.Item>
-                                    <MinusCircleOutlined onClick={() => remove(name)} />
-                                </Space>
+                                },
+                                ]}
+                            >
+                            <DatePicker />
+                            </Form.Item>
+                            <Form.Item
+                                name="price"
+                                label="Price"
+                                rules={[
+                                {
+                                    required: true,
                                 
-                                ))}
-                                <Form.Item>
-                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                    Add Chapter
-                                </Button>
-                                </Form.Item>
-                            </>
-                            )}
-                        </Form.List>
-                        </Col>
-                        <Col span={12}>
-                        <Form.List name="classTime">
-                        {(classFields, { add, remove }) => (
-                            <>
-                                {classFields.map(({ key, name, ...restField }) => (
-                                <Space key={key} style={{ display: 'flex', marginBottom: 8}} align="baseline">
-                                    <Form.Item
-                                    {...restField}
-                                    name={[name, 'Week']}
-                                    >
-                                        <Select placeholder="Day of the Week" >
-                                            <Option key={1} value={"Monday"}>Monday</Option>
-                                            <Option key={2} value={"Tuesday"}>Tuesday</Option>
-                                            <Option key={3} value={"Wednesday"}>Wednesday</Option>
-                                            <Option key={4} value={"Thursday"}>Thursday</Option>
-                                            <Option key={5} value={"Friday"}>Friday</Option>
-                                            <Option key={6} value={"Saturday"}>Saturday</Option>
-                                            <Option key={7} value={"Sunday"}>Sunday</Option>
-                                        </Select>
+                                },
+                                ]}
+                            >
+                                <Input />
+                            </Form.Item>
+                            <Form.Item
+                                name="maxStudents"
+                                label="Student Limit"
+                                rules={[
+                                {
+                                    required: true,
                                 
+                                },
+                                ]}
+                            >
+                                <Input />
+                            </Form.Item>
+                            <Form.Item
+                                name="duration"
+                                label="Duration"
+                                rules={[
+                                {
+                                    required: true,
+                                
+                                },
+                                ]}
+                            >
+                                <Input />
+                            </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                            <Form.Item
+                                name="detail"
+                                label="Description"
+                                rules={[
+                                {
+                                    required: true,
+                                
+                                },
+                                ]}
+                            >
+                                <Input.TextArea rows={9} />
+                            </Form.Item>
+                            
+                            </Col>
+                            <Col span={10}>
+                                <Form.Item  label="Cover" >
+                                    <Form.Item valuePropName="fileList" getValueFromEvent={normFile} style={{height: '100px'}}>
+                                        <Upload.Dragger name="files" action="/upload.do" >
+                                            <p className="ant-upload-drag-icon">
+                                            <InboxOutlined />
+                                            </p>
+                                            <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                                            <p className="ant-upload-hint">Support for a single or bulk upload.</p>
+                                        </Upload.Dragger>
                                     </Form.Item>
-                                    <Form.Item
-                                    {...restField}
-                                    name={[name, 'Time']}
-                                    >
-                                        <TimePicker />
-                                    </Form.Item>
-                                    <MinusCircleOutlined onClick={() => remove(name)} />
-                                </Space>
-                                ))}
-                                <Form.Item>
-                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                    Add Class Time
-                                </Button>
                                 </Form.Item>
-                            </>
-                            )}
-                        </Form.List> 
-                        </Col>
-                    </Row>
+                            
+                            </Col>
+                        </Row>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                        Submit
-                        </Button>
-                    </Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Update Course
+                    </Button>
+                </Form.Item>
+                </Form>
+                            
+                    </TabPane>
+                    <TabPane tab="Course Schedule" key="2">
+
+                    <Form name="Schedule" onFinish={onFinish2} autoComplete="off"  form={form2}  >
+                        <Row> 
+                            <Col span={12}>
+                            <Form.List name="chapters">
+                                {(chapterFields, { add, remove }) => (
+                                <>
+                                    {
+                                    chapterFields.map(({ key, name, ...restField }) => (
+                                    <Space key={key} style={{ display: 'flex', marginBottom: 8  }} align="baseline" size="large">
+                                        <Form.Item
+                                        {...restField}
+                                        name={[name, 'name']}
+                                        style={{ width: "360px" }}
+                                        >
+                                        <Input placeholder="Chapter Name" />
+                                        </Form.Item>
+                                        <Form.Item
+                                        {...restField}
+                                        name={[name, 'content']}
+                                        style={{ width: "360px" }}
+                                        >
+                                        <Input placeholder="Chapter Content" />
+                                        </Form.Item>
+                                        <MinusCircleOutlined onClick={() => remove(name)} />
+                                    </Space>
+                                    
+                                    ))}
+                                    <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                        Add Chapter
+                                    </Button>
+                                    </Form.Item>
+                                </>
+                                )}
+                            </Form.List>
+                            </Col>
+                            <Col span={12}>
+                            <Form.List name="classTime">
+                            {(classFields, { add, remove }) => (
+                                <>
+                                    {classFields.map(({ key, name, ...restField }) => (
+                                    <Space key={key} style={{ display: 'flex', marginBottom: 8}} align="baseline" prefix='test'>
+                                        <Form.Item
+                                        {...restField}
+                                        name={[name, 'Week']}
+                                        style={{width: "360px" }}
+                                        >
+                                            <Select placeholder="Day of the Week" >
+                                                <Option key={1} value={"Monday"}>Monday</Option>
+                                                <Option key={2} value={"Tuesday"}>Tuesday</Option>
+                                                <Option key={3} value={"Wednesday"}>Wednesday</Option>
+                                                <Option key={4} value={"Thursday"}>Thursday</Option>
+                                                <Option key={5} value={"Friday"}>Friday</Option>
+                                                <Option key={6} value={"Saturday"}>Saturday</Option>
+                                                <Option key={7} value={"Sunday"}>Sunday</Option>
+                                            </Select>
+                                    
+                                        </Form.Item>
+                                        <Form.Item
+                                        {...restField}
+                                        name={[name, 'Time']}
+                                        
+                                        >
+                                            <TimePicker  style={{ width: "360px" }}/>
+                                        </Form.Item>
+                                        <MinusCircleOutlined onClick={() => remove(name)} />
+                                    </Space>
+                                    ))}
+                                    <Form.Item>
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                                        Add Class Time
+                                    </Button>
+                                    </Form.Item>
+                                </>
+                                )}
+                            </Form.List> 
+                            </Col>
+                        </Row>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                            Submit
+                            </Button>
+                        </Form.Item>
+                    
+
+                        </Form>
+
                 
-
-                    </Form>
-
-               
-                </TabPane>
-               
-            </Tabs>
-
+                    </TabPane>
+                
+                </Tabs>
+            </Content>
     
 
 
