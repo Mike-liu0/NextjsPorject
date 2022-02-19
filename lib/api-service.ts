@@ -440,3 +440,16 @@ export function addCourseSchedule(schedule: CourseScheduleDto){
         });
 }
 
+
+
+// statistics APIs
+
+export function getStatisticsOverview(){
+    const axios = require('axios');
+    return axios.get(API_URL + 'statistics/overview',{
+        headers: {'Authorization': 'Bearer ' + localStorage.getItem('token')},
+            
+        }).then(function (response: any) {
+            return response.data.data;
+        })
+}
